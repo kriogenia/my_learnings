@@ -1,0 +1,56 @@
+<h1>Show Topic</h1>
+
+<ul>
+
+  <li>
+    <strong>Title:</strong>
+    <%= @topic.title %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.topic_path(@conn, :edit, @topic) %></span> |
+<span><%= link "Back", to: Routes.topic_path(@conn, :index) %></span>
+
+<div class="input-field">
+  <textarea class="materialize-textarea" id="comment-text-area"/>
+  <button class="btn" id="add-comment-btn" disabled>Add</button>
+  <ul class="collection" id="comment-section-ul">
+  </ul>
+</div>
+
+<script>
+  const topicId = <%= @topic.id %>;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    window.createSocket(topicId)
+	  .then(({channel, response}) => {
+		// Print comments
+		response.comments?.forEach(addComment);
+		// Listen to new comments
+		channel.on(`comments:${topicId}:new`, ({comment}) => addComment(comment));
+		// Event to send new comments
+	  	const addBtn = document.getElementById("add-comment-btn");
+		addBtn.disabled = false;
+		addBtn.addEventListener("click", (_event) => {
+		  const content = document.getElementById("comment-text-area").value;
+		  channel.push("comments:add", { content: content }); 
+      	});
+	  })
+	  .catch((resp) => {
+		console.log("Unable to join", resp);
+	  });
+
+  });
+
+  const addComment = (comment) => {
+	document.getElementById("comment-section-ul").innerHTML += 
+	  `<li class="collection-item">
+	    ${comment.content}
+		<div class="secondary-content">
+		  ${comment.user.email}
+		</div>
+	  </li>`;
+  }; 
+
+</script>
