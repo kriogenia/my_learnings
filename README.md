@@ -6,6 +6,7 @@ This single repo contains some of the little projects I've made while learning s
 * [Discuss](./elixir_discuss/). <img src="./icons/elixir.svg" height="16px"/> <img src="./icons/phoenix.svg" height="16px"/> Discussion forum with GitHub authentication built with Elixir on top of Phoenix. It has a REST API, Websocket communications and a server-side rendered frontend.
 * [Identicon](./elixir_identicon/). <img src="./icons/elixir.svg" height="16px"/> Basic identicon generator amde with Elixir.
 * [Invaders](./rust_invaders/) <img src="./icons/rust.svg" height="16px"/> Command-line clone made with Rust of Space Invaders.
+* [Pet Clinic](./spring_pet_clinic/) <img src="./icons/spring.svg" height="16px"/> Implementation with Kotlin and Spring 5 of the Pet Clinic sample application. _Unfinished_.
 
 ## Soon
 Technlogies I plan to learn and will have a new project over here in the furure.
