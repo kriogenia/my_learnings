@@ -1,0 +1,157 @@
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "title_word_delimiter_graph_f": {
+          "type": "word_delimiter_graph",
+          "catenate_all": true,
+          "stem_english_possessive": false
+        },
+        "number_synonyms_f": {
+          "type": "synonym",
+          "synonyms": [
+            "0, zero",
+            "i, 1, one",
+            "ii, 2, two",
+            "iii, 3, three",
+            "iv, 4, four",
+            "v, 5, five",
+            "vi, 6, six",
+            "vii, 7, seven",
+            "viii, 8, eight",
+            "ix, 9, nine",
+            "x, 10, ten"
+          ]
+        },
+        "title_multiplexer_f": {
+          "type": "multiplexer",
+          "filters": [
+            "title_word_delimiter_graph_f, flatten_graph",
+            "number_synonyms_f"
+          ]
+        },
+        "type_synonyms_f": {
+          "type": "synonym",
+          "synonyms": [
+            "film, picture => movie",
+            "series => tvseries",
+            "ep, episode => tvepisode",
+            "special => tvspecial",
+            "miniseries => tvminiseries",
+            "game => videogame"
+          ]
+        },
+        "type_keep_f" : {
+          "type":"keep",
+          "keep_words": [
+            "movie",
+            "short",
+            "tvminiseries",
+            "tvseries",
+            "tvepisode",
+            "tvspecial",
+            "tvmovie",
+            "video",
+            "videogame"
+          ]
+        }
+      },
+      "analyzer": {
+        "title_analyzer": {
+          "type": "custom",
+          "tokenizer": "whitespace",
+          "filter": [
+            "asciifolding",
+            "decimal_digit",
+            "lowercase",
+            "number_synonyms_f",
+            "title_word_delimiter_graph_f",
+            "stop",
+            "flatten_graph"
+          ]
+        },
+        "title_search_analyzer": {
+          "type": "custom",
+          "char_filter" : [
+            "html_strip"
+          ],
+          "tokenizer": "whitespace",
+          "filter": [
+            "asciifolding",
+            "decimal_digit",
+            "lowercase",
+            "title_word_delimiter_graph_f",
+            "flatten_graph"
+          ]
+        },
+        "type_search_analyzer": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "filter": [
+            "lowercase",
+            "type_synonyms_f"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "original_title": {
+        "type": "text",
+        "fields": {
+          "perfect": {
+            "type": "text"
+          },
+          "partial": {
+            "type": "text",
+            "search_analyzer": "title_search_analyzer",
+            "analyzer": "title_analyzer"
+          }
+        }
+      },
+      "type": {
+        "type": "keyword",
+        "normalizer": "lowercase"
+      },
+      "title": {
+        "type": "text",
+        "fields": {
+          "perfect": {
+            "type": "text"
+          },
+          "partial": {
+            "type": "text",
+            "search_analyzer": "title_search_analyzer",
+            "analyzer": "title_analyzer"
+          }
+        }
+      },
+      "is_adult": {
+        "type": "keyword"
+      },
+      "start_year": {
+        "type": "date",
+        "format": "year"
+      },
+      "end_year": {
+        "type": "date",
+        "format": "year"
+      },
+      "runtime_minutes": {
+        "type": "text"
+      },
+      "genres": {
+        "type": "keyword",
+        "normalizer": "lowercase"
+      },
+      "average_rating": {
+        "type": "scaled_float",
+        "scaling_factor": 10
+      },
+      "num_votes": {
+        "type": "integer"
+      }
+    }
+  }
+}

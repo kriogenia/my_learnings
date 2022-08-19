@@ -1,0 +1,152 @@
+{
+  "size": 25,
+  "query": {
+    "function_score": {
+      "query": {
+        "dis_max": {
+          "queries": [
+            {
+              "bool": {
+                "minimum_should_match": 1,
+                "should": [
+                  {
+                    "match": {
+                      "original_title.partial": {
+                        "query": "Spiderman"
+                      }
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "original_title.perfect": "Spiderman"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "bool": {
+                "minimum_should_match": 1,
+                "should": [
+                  {
+                    "match": {
+                      "title.partial": {
+                        "query": "Spiderman"
+                      }
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "title.perfect": "Spiderman"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "functions": [
+        {
+          "filter": {
+            "term": {
+              "type": "movie"
+            }
+          },
+          "weight": 1.5
+        },
+        {
+          "filter": {
+            "term": {
+              "type": "tvEpisode"
+            }
+          },
+          "weight": 0.00001
+        },
+        {
+          "field_value_factor": {
+            "field": "num_votes",
+            "factor": 0.5,
+            "modifier": "log1p",
+            "missing": 0
+          }
+        },
+        {
+          "field_value_factor": {
+            "field": "average_rating",
+            "factor": 0.2,
+            "modifier": "square",
+            "missing": 0
+          }
+        },
+        {
+          "gauss": {
+            "start_year": {
+              "origin": "now",
+              "offset": "1825d",
+              "scale": "10950d",
+              "decay": 0.8
+            }
+          }
+        }
+      ],
+      "boost_mode": "avg"
+    }
+  },
+  "aggs": {
+    "genres": {
+      "terms": {
+        "field": "genres"
+      }
+    },
+    "type": {
+      "filter": {
+        "term": {
+          "genres": "adventure"
+        }
+      },
+      "aggs": {
+        "type": {
+          "terms": {
+            "field": "type"
+          }
+        },
+        "type_bucket_sort": {
+          "bucket_sort": {
+            "sort": [
+              {
+                "type": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "year": {
+      "filter": {
+        "term": {
+          "genres": "action"
+        }
+      },
+      "aggs": {
+        "year": {
+          "date_range": {
+            "field": "start_year",
+            "ranges": [
+              {
+                "from": "2000",
+                "to": "2010"
+              },
+              {
+                "from": "2010",
+                "to": "2020"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
