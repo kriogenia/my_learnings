@@ -1,6 +1,7 @@
 package dev.sotoestevez.coffeeservice.web.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 
 import javax.validation.constraints.NotBlank;
@@ -12,6 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record CoffeeDto(
 
     @Null
@@ -50,4 +52,12 @@ public record CoffeeDto(
 
     Integer quantityOnHand
 
-) {}
+) {
+
+    public CoffeeDto withQuantityOnHand(Integer quantityOnHand) {
+        return new CoffeeDto(id(), version(), createdDate(), lastModifiedDate(), name(), body(), country(), variety(),
+                upc(), price(), quantityOnHand
+        );
+    }
+
+}

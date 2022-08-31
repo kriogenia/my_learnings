@@ -1,0 +1,25 @@
+spring.application.name: coffee-service
+
+# Port
+server.port: 8080
+
+# Inventory Service
+dev.sotoestevez.inventory:
+  host: http://localhost:8082
+  user: user
+  password: password
+
+# Database
+spring.datasource:
+  url: jdbc:h2:mem:coffee-service
+  driver-class-name: org.h2.Driver
+  username: sa
+
+spring.sql.init.mode: embedded
+spring.jpa.defer-datasource-initialization: true
+
+#spring.jpa.hibernate.ddl-auto=update
+
+# Log
+logging.level:
+  dev.sotoestevez: debug

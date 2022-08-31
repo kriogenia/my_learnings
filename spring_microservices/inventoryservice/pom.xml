@@ -11,7 +11,7 @@
 	<groupId>dev.sotoestevez</groupId>
 	<artifactId>inventoryservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>inventoryservice</name>
+	<name>inventory-service</name>
 	<description>Microservice in charge of the items</description>
 	<properties>
 		<java.version>17</java.version>

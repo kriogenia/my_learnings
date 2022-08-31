@@ -1,8 +1,7 @@
 package dev.sotoestevez.inventoryservice.domain
 
-import dev.sotoestevez.inventoryservice.domain.BaseEntity
 import org.hibernate.annotations.Type
-import java.util.UUID
+import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 

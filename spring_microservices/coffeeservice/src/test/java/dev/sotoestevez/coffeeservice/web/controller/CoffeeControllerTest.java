@@ -1,7 +1,7 @@
 package dev.sotoestevez.coffeeservice.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.sotoestevez.coffeeservice.service.CoffeeService;
+import dev.sotoestevez.coffeeservice.services.CoffeeService;
 import dev.sotoestevez.coffeeservice.web.model.CoffeeBody;
 import dev.sotoestevez.coffeeservice.web.model.CoffeeDto;
 import org.junit.jupiter.api.Test;

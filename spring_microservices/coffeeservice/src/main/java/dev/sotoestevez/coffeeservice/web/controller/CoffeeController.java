@@ -1,8 +1,11 @@
 package dev.sotoestevez.coffeeservice.web.controller;
 
-import dev.sotoestevez.coffeeservice.service.CoffeeService;
+import dev.sotoestevez.coffeeservice.services.CoffeeService;
+import dev.sotoestevez.coffeeservice.web.controller.params.ListCoffeeRequestParam;
 import dev.sotoestevez.coffeeservice.web.model.CoffeeDto;
+import dev.sotoestevez.coffeeservice.web.model.CoffeePagedList;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,5 +43,14 @@ public class CoffeeController {
                                             @RequestBody @Validated CoffeeDto dto) {
         return new ResponseEntity<>(coffeeService.updateCoffee(id, dto), HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping(produces = { "application/json" })
+    public ResponseEntity<CoffeePagedList> listCoffees(ListCoffeeRequestParam params) {
+        CoffeePagedList pagedList = coffeeService.listCoffees(params.getName(), params.getBody(),
+                PageRequest.of(params.getPageNumber(), params.getPageSize()), params.getQuantityOnHand());
+
+        return new ResponseEntity<>(pagedList, HttpStatus.OK);
+    }
+
 
 }

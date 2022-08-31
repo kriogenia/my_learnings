@@ -47,7 +47,7 @@ public class Coffee {
     private BigDecimal price;
 
     private Integer minOnHand;
-    private Integer quantityToBuild;
+    private Integer quantityToBrew;
 
     @Override
     public String toString() {

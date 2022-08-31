@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,6 +20,11 @@ public class CoffeeLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        //loadCoffees();
+        repository.findAll().forEach(i -> log.info(i.toString()));
+    }
+
+    private void loadCoffees() {
         var faker = new Faker();
         for (int i = 0; i < 10; i++) {
             var coffee = faker.coffee();
@@ -32,12 +36,10 @@ public class CoffeeLoader implements CommandLineRunner {
                     .upc(faker.numerify("##########"))
                     .price(new BigDecimal(faker.numerify("#.##")))
                     .minOnHand(0)
-                    .quantityToBuild(0)
+                    .quantityToBrew(0)
                     .build();
             repository.save(item);
         }
-
-        repository.findAll().forEach(i -> log.info(i.toString()));
     }
 
 }

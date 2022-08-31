@@ -13,9 +13,9 @@ class InventoryBootLoader(val inventoryRepository: InventoryRepository): Command
     private val log = LoggerFactory.getLogger(javaClass)
 
     val db = mapOf(
-        "1891513014" to UUID.fromString("c7fa7e28-27e4-11ed-a261-0242ac120002"),
-        "1938126311" to UUID.fromString("2b4b098e-27e5-11ed-a261-0242ac120002"),
-        "3433241019" to UUID.fromString("c44cca0e-27e6-11ed-a261-0242ac120002"),
+        "9665547023" to UUID.fromString("29242b7c-07b1-4b73-88a8-17b60421d764"),
+        "6143870099" to UUID.fromString("bb60ad3a-0f64-46ba-bc34-d5b193a96cb1"),
+        "8185948350" to UUID.fromString("213e72c8-6c6f-4d3f-9a70-f86b4e40d00a"),
     )
 
     override fun run(vararg args: String?) {
