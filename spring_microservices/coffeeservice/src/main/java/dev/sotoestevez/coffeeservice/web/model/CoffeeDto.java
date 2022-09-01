@@ -8,13 +8,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record CoffeeDto(
+public record CoffeeDto (
 
     @Null
     UUID id,
@@ -52,7 +53,7 @@ public record CoffeeDto(
 
     Integer quantityOnHand
 
-) {
+) implements Serializable {
 
     public CoffeeDto withQuantityOnHand(Integer quantityOnHand) {
         return new CoffeeDto(id(), version(), createdDate(), lastModifiedDate(), name(), body(), country(), variety(),

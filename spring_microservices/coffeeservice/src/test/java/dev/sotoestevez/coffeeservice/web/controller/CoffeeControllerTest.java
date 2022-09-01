@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,7 +34,7 @@ class CoffeeControllerTest {
 
     @Test
     void getCoffeeById() throws Exception {
-        given(coffeeService.getById(any())).willReturn(getValidCoffeeDto());
+        given(coffeeService.getById(any(), anyBoolean())).willReturn(getValidCoffeeDto());
 
         mockMvc.perform(get(CoffeeController.PATH + "/" + UUID.randomUUID()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

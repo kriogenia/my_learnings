@@ -1,15 +1,11 @@
 package dev.sotoestevez.coffeeservice.bootstrap;
 
-import dev.sotoestevez.coffeeservice.domain.Coffee;
 import dev.sotoestevez.coffeeservice.repositories.CoffeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.datafaker.Faker;
+//import net.datafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
-import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +19,7 @@ public class CoffeeLoader implements CommandLineRunner {
         //loadCoffees();
         repository.findAll().forEach(i -> log.info(i.toString()));
     }
-
+/**
     private void loadCoffees() {
         var faker = new Faker();
         for (int i = 0; i < 10; i++) {
@@ -41,5 +37,5 @@ public class CoffeeLoader implements CommandLineRunner {
             repository.save(item);
         }
     }
-
+*/
 }

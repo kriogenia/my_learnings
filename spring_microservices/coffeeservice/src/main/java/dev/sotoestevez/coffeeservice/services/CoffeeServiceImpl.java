@@ -24,11 +24,19 @@ public class CoffeeServiceImpl implements CoffeeService {
     private final CoffeeMapper coffeeMapper;
 
     @Override
-    public CoffeeDto getById(UUID id) {
-        return coffeeMapper.map(
+    public CoffeeDto getById(UUID id, Boolean showQuantityOnHand) {
+        return getMapper(showQuantityOnHand).apply(
                 coffeeRepository.findById(id).orElseThrow(NotFoundException::new)
         );
     }
+
+    @Override
+    public CoffeeDto getByUpc(String upc, Boolean showQuantityOnHand) {
+        return getMapper(showQuantityOnHand).apply(
+                coffeeRepository.findByUpc(upc).orElseThrow(NotFoundException::new)
+        );
+    }
+
 
     @Override
     public CoffeeDto saveNewCoffee(CoffeeDto dto) {
@@ -69,12 +77,15 @@ public class CoffeeServiceImpl implements CoffeeService {
             }
         }
 
-        Function<Coffee, CoffeeDto> mapper = (showQuantityOnHand) ? coffeeMapper::mapWithInventory : coffeeMapper::map;
-
         return new CoffeePagedList(
-                page.getContent().stream().map(mapper).collect(Collectors.toList()),
+                page.getContent().stream().map(getMapper(showQuantityOnHand)).collect(Collectors.toList()),
                 PageRequest.of(page.getPageable().getPageNumber(), page.getPageable().getPageSize()),
                 page.getTotalElements()
         );
     }
+
+    private Function<Coffee, CoffeeDto> getMapper(Boolean quantityOnHand) {
+        return (quantityOnHand) ? coffeeMapper::mapWithInventory : coffeeMapper::map;
+    }
+
 }

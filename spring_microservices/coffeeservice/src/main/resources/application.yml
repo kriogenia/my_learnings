@@ -22,4 +22,7 @@ spring.jpa.defer-datasource-initialization: true
 
 # Log
 logging.level:
-  dev.sotoestevez: debug
+  dev.sotoestevez: DEBUG
+
+# Cache
+spring.cache.jcache.config: classpath:ehcache.xml

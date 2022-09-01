@@ -12,5 +12,5 @@ spring.jpa.defer-datasource-initialization: true
 
 # Log
 logging.level:
-  dev.sotoestevez: debug
+  dev.sotoestevez: DEBUG
 
