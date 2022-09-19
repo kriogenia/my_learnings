@@ -1,6 +1,6 @@
 package dev.sotoestevez.orderservice.web.controllers
 
-import dev.sotoestevez.orderservice.services.CoffeeOrderService
+import dev.sotoestevez.orderservice.services.order.CoffeeOrderService
 import dev.sotoestevez.orderservice.web.model.CoffeeOrderDto
 import dev.sotoestevez.orderservice.web.model.CoffeeOrderPagedList
 import org.springframework.data.domain.PageRequest
@@ -19,9 +19,9 @@ class CoffeeOrderController(val orderService: CoffeeOrderService) {
 
     @GetMapping("orders")
     fun listOrders(
-        @PathVariable("customerId") customerId: UUID,
-        @RequestParam(value = "pageNumber") pageNumber: Int?,
-        @RequestParam(value = "pageSize") pageSize: Int?
+        @PathVariable customerId: UUID,
+        @RequestParam pageNumber: Int?,
+        @RequestParam pageSize: Int?
     ): CoffeeOrderPagedList {
         val page = pageNumber ?: DEFAULT.PAGE_NUMBER
         val size = pageSize ?: DEFAULT.PAGE_SIZE
@@ -32,7 +32,7 @@ class CoffeeOrderController(val orderService: CoffeeOrderService) {
     @PostMapping("orders")
     @ResponseStatus(HttpStatus.CREATED)
     fun placeOrder(
-        @PathVariable("customerId") customerId: UUID,
+        @PathVariable customerId: UUID,
         @RequestBody coffeeOrderDto: CoffeeOrderDto
     ): CoffeeOrderDto {
         return orderService.placeOrder(customerId, coffeeOrderDto)
@@ -40,8 +40,8 @@ class CoffeeOrderController(val orderService: CoffeeOrderService) {
 
     @GetMapping("orders/{orderId}")
     fun getOrder(
-        @PathVariable("customerId") customerId: UUID,
-        @PathVariable("orderId") orderId: UUID
+        @PathVariable customerId: UUID,
+        @PathVariable orderId: UUID
     ): CoffeeOrderDto {
         return orderService.getOrderById(customerId, orderId)
     }
@@ -49,8 +49,8 @@ class CoffeeOrderController(val orderService: CoffeeOrderService) {
     @PatchMapping("/orders/{orderId}/pickup")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun pickupOrder(
-        @PathVariable("customerId") customerId: UUID,
-        @PathVariable("orderId") orderId: UUID
+        @PathVariable customerId: UUID,
+        @PathVariable orderId: UUID
     ) {
         orderService.pickUpOrder(customerId, orderId)
     }

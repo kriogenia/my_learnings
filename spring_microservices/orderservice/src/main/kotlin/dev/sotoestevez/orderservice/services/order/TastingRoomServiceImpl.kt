@@ -1,12 +1,10 @@
-package dev.sotoestevez.orderservice.services
+package dev.sotoestevez.orderservice.services.order
 
 import dev.sotoestevez.orderservice.bootstrap.TASTING_ROOM
 import dev.sotoestevez.orderservice.domain.Customer
-import dev.sotoestevez.orderservice.repositories.CoffeeOrderRepository
 import dev.sotoestevez.orderservice.repositories.CustomerRepository
 import dev.sotoestevez.orderservice.web.model.CoffeeOrderDto
 import dev.sotoestevez.orderservice.web.model.CoffeeOrderLineDto
-import net.datafaker.Faker
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -21,7 +19,8 @@ class TastingRoomServiceImpl(
 ) : TastingRoomService {
 
     private val log = LoggerFactory.getLogger(javaClass)
-    private val faker = Faker()
+
+    val upcs= arrayOf("9665547023", "6143870099", "8185948350")
 
     @Transactional
     @Scheduled(fixedRate = 2000)
@@ -36,7 +35,7 @@ class TastingRoomServiceImpl(
     }
 
     private fun placeOrder(customer: Customer) {
-        val upc = faker.numerify("##########")
+        val upc = upcs.random()
         val orderLineDto = CoffeeOrderLineDto(
             upc = upc,
             orderQuantity = (0..6).random()

@@ -1,10 +1,11 @@
-package dev.sotoestevez.orderservice.services
+package dev.sotoestevez.orderservice.services.order
 
 import dev.sotoestevez.orderservice.domain.CoffeeOrder
 import dev.sotoestevez.orderservice.domain.Customer
 import dev.sotoestevez.orderservice.domain.OrderStatus
 import dev.sotoestevez.orderservice.repositories.CoffeeOrderRepository
 import dev.sotoestevez.orderservice.repositories.CustomerRepository
+import dev.sotoestevez.orderservice.services.coffee.CoffeeService
 import dev.sotoestevez.orderservice.web.mappers.CoffeeOrderMapper
 import dev.sotoestevez.orderservice.web.model.CoffeeOrderDto
 import dev.sotoestevez.orderservice.web.model.CoffeeOrderPagedList
@@ -34,6 +35,7 @@ class CoffeeOrderServiceImpl(
 
         return if (customerOptional.isPresent) {
             val orderPage: Page<CoffeeOrder> = orderRepository.findAllByCustomer(customerOptional.get(), pageable)
+
             CoffeeOrderPagedList(
                 orderPage.stream().map(coffeeOrderMapper::map).collect(Collectors.toList()),
                 PageRequest.of(orderPage.pageable.pageNumber, orderPage.pageable.pageSize),

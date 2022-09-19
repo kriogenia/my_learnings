@@ -1,7 +1,8 @@
 package dev.sotoestevez.orderservice.domain
 
-import java.sql.Timestamp
+import org.hibernate.annotations.Type
 import java.util.*
+import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.ManyToOne
 
@@ -10,8 +11,8 @@ class CoffeeOrderLine(
 
     val orderQuantity: Int,
     val allocatedQuantity: Int,
-    val coffeeId: UUID? = null,
+    val upc: String? = null,
 
     @ManyToOne
-    var order: CoffeeOrder? = null,
+    var order:CoffeeOrder? = null,
 ) : BaseEntity()

@@ -15,6 +15,11 @@ class CoffeeOrderBootstrap(val customerRepository: CustomerRepository): CommandL
     private val log = LoggerFactory.getLogger(javaClass)
 
     override fun run(vararg args: String?) {
+        //addTastingRoomCustomer()
+        customerRepository.findAll().forEach{ log.info("Added customer: ${it.id}")}
+    }
+
+    private fun addTastingRoomCustomer() {
         if (customerRepository.count() == 0L) {
             val customer = customerRepository.save(
                 Customer(

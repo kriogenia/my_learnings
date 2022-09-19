@@ -29,6 +29,7 @@ open class BaseEntity {
     @field:UpdateTimestamp
     var lastModifiedDate: Timestamp = Timestamp.from(Instant.now())
 
+    @Transient
     val isNew = this.id == null
 
 }

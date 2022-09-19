@@ -1,4 +1,4 @@
-package dev.sotoestevez.orderservice.services
+package dev.sotoestevez.orderservice.services.order
 
 import dev.sotoestevez.orderservice.web.model.CoffeeOrderDto
 import dev.sotoestevez.orderservice.web.model.CoffeeOrderPagedList

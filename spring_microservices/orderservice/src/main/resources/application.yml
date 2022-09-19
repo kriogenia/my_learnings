@@ -1,0 +1,23 @@
+spring.application.name: order-service
+
+# Port
+server.port: 8081
+
+# CoffeeService
+dev.sotoestevez.coffee:
+    host: http://localhost:8080
+    user: user
+    password: password
+
+# Database
+spring.datasource:
+    url: jdbc:h2:mem:order-service
+    driver-class-name: org.h2.Driver
+    username: sa
+
+spring.sql.init.mode: embedded
+spring.jpa.defer-datasource-initialization: true
+
+# Log
+logging.level:
+    dev.sotoestevez: DEBUG

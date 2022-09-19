@@ -1,13 +1,14 @@
 package dev.sotoestevez.orderservice.web.mappers
 
 import dev.sotoestevez.orderservice.domain.CoffeeOrder
+import dev.sotoestevez.orderservice.services.coffee.CoffeeService
 import dev.sotoestevez.orderservice.web.model.CoffeeOrderDto
 import org.springframework.stereotype.Component
 
 @Component
 class CoffeeOrderMapper(
-    val orderLineMapper: CoffeeOrderLineMapper,
-    val dateMapper: DateMapper
+    private val orderLineMapper: CoffeeOrderLineMapper,
+    private val dateMapper: DateMapper,
 ) {
 
     fun map(coffeeOrder: CoffeeOrder): CoffeeOrderDto {

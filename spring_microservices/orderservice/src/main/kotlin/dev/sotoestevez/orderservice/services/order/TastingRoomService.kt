@@ -1,4 +1,4 @@
-package dev.sotoestevez.orderservice.services
+package dev.sotoestevez.orderservice.services.order
 
 interface TastingRoomService {
     fun placeTastingRoomOrder()
