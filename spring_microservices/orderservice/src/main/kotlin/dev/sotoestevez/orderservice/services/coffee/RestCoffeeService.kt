@@ -26,7 +26,7 @@ class RestCoffeeService(
 
     override fun getCoffeeByUpc(upc: String): CoffeeDto {
         return  restTemplate.getForEntity(host + coffeeByUpcPath, CoffeeDto::class.java, upc).body
-            ?: throw RuntimeException("No coffee matches the given UPC")
+            ?: throw RuntimeException("No coffee matches the given UPC: $upc")
     }
 
 

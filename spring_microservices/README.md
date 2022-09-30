@@ -14,4 +14,4 @@ Little learning project oriented in the creation of different microservices to m
 ## Features
 * REST APIs to create, read or update coffees and coffee orders with microservice communication to provide all the relevant data to the requests.
 * BOM project to centralize and manage dependency versions, builds and enforcements of Maven for all the projects.
-
+* Compatibility with H2 and MySQL databases via profiles.

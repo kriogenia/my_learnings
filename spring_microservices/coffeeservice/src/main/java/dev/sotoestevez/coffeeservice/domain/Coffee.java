@@ -23,7 +23,7 @@ public class Coffee {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "UUID", strategy = "uuid2")
     @Type(type = "uuid-char")
-    @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
+    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
 
     @Version

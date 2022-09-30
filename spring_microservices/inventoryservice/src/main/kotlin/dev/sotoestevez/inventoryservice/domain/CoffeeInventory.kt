@@ -8,7 +8,7 @@ import javax.persistence.Entity
 @Entity
 class CoffeeInventory(
 
-    @field:Column(length = 36, columnDefinition = "varchar", nullable = false)
+    @field:Column(length = 36, columnDefinition = "varchar(36)", nullable = false)
     @field:Type(type = "org.hibernate.type.UUIDCharType")
     val coffeeId: UUID,
 

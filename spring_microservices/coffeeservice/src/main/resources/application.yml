@@ -9,15 +9,6 @@ dev.sotoestevez.inventory:
   user: user
   password: password
 
-# Database
-spring.datasource:
-  url: jdbc:h2:mem:coffee-service
-  driver-class-name: org.h2.Driver
-  username: sa
-
-spring.sql.init.mode: embedded
-spring.jpa.defer-datasource-initialization: true
-
 #spring.jpa.hibernate.ddl-auto=update
 
 # Log

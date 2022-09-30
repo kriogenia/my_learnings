@@ -12,7 +12,7 @@ class Customer(
 
     val name: String,
 
-    @field:Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
+    @field:Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     @field:Type(type = "org.hibernate.type.UUIDCharType")
     val apiKey: UUID,
 
