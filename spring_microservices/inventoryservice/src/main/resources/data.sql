@@ -1,0 +1,3 @@
+INSERT INTO coffee_inventory(id, created_date, last_modified_date, version, coffee_id, quantity_on_hand, upc) values ('58fd9ee9-1464-4af7-b749-bfa1e84049bd', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, '29242b7c-07b1-4b73-88a8-17b60421d764', 529, '9665547023');
+INSERT INTO coffee_inventory(id, created_date, last_modified_date, version, coffee_id, quantity_on_hand, upc) values ('7d29a7e4-37ae-4dec-ba1f-49f6d9ed9864', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, 'bb60ad3a-0f64-46ba-bc34-d5b193a96cb1', 300, '6143870099');
+INSERT INTO coffee_inventory(id, created_date, last_modified_date, version, coffee_id, quantity_on_hand, upc) values ('5fdc5ede-406e-4692-bde3-83530aedf56b', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, '213e72c8-6c6f-4d3f-9a70-f86b4e40d00a', 239, '8185948350');

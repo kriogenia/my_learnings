@@ -1,0 +1,19 @@
+spring.application.name: coffee-service
+
+# Port
+server.port: 8080
+
+# Inventory Service
+dev.sotoestevez.inventory:
+  host: http://localhost:8082
+  user: user
+  password: password
+
+#spring.jpa.hibernate.ddl-auto=update
+
+# Log
+logging.level:
+  dev.sotoestevez: DEBUG
+
+# Cache
+spring.cache.jcache.config: classpath:ehcache.xml
