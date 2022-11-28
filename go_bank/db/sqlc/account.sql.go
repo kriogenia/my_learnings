@@ -16,8 +16,7 @@ INSERT INTO accounts (
 	currency
 ) VALUES (
 	$1, $2, $3
-)
-RETURNING id, owner, balance, currency, created_at
+) RETURNING id, owner, balance, currency, created_at
 `
 
 type CreateAccountParams struct {
