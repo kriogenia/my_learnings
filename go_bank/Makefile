@@ -1,14 +1,18 @@
 DB_URL=postgresql://root:secret@localhost:5432/gobank?sslmode=disable
+DB_NAME=gobank-postgres
 GO_PATH=~/go/bin
 
 postgres:
-	docker run --name gobank-postgres -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:15-alpine
+	docker run --name $(DB_NAME) -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:15-alpine
+
+startdb:
+	docker start $(DB_NAME)
 
 createdb:
-	docker exec -it gobank-postgres createdb --username=root --owner=root gobank
+	docker exec -it $(DB_NAME) createdb --username=root --owner=root gobank
 
 dropdb:
-	docker exec -it gobank-postgres dropdb gobank
+	docker exec -it $(DB_NAME) dropdb gobank
 
 migrateup:
 	$(GO_PATH)/migrate -path db/migration -database "$(DB_URL)" -verbose up
@@ -22,4 +26,4 @@ sqlc:
 test:
 	go test -v -cover ./...
 
-.PHONY: postgres createdb dropdb migrateup migratedown
+.PHONY: postgres startdb createdb dropdb migrateup migratedown

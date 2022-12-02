@@ -14,15 +14,18 @@ const (
 	dbSource = "postgresql://root:secret@localhost:5432/gobank?sslmode=disable"
 )
 
+var testDB *sql.DB
 var testQueries *Queries
 
 func TestMain(m *testing.M) {
-	conn, err := sql.Open(dbDriver, dbSource)
+	var err error
+
+	testDB, err = sql.Open(dbDriver, dbSource)
 	if err != nil {
 		log.Fatal("unable to connect to db: ", err)
 	}
 
-	testQueries = New(conn)
+	testQueries = New(testDB)
 
 	os.Exit(m.Run())
 }
