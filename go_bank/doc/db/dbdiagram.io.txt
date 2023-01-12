@@ -1,12 +1,23 @@
+Table users as U {
+  id bigserial [pk]
+  username varchar [unique, not null]
+  hashed_password varchar [not null]
+  full_name varchar [not null]
+  email varchar [unique, not null]
+  password_change_at timestamptz [not null, default: `now()`]
+  created_at timestamptz [not null, default: `now()`]
+}
+
 Table accounts as A {
   id bigserial [pk]
-  owner varchar [not null]
+  owner bigserial [ref: > U.id, not null]
   balance bigint [not null]
   currency varchar [not null]
   created_at timestamptz [not null, default: `now()`]
   
   Indexes {
     owner
+    (owner, currency) [unique]
   }
 }
 

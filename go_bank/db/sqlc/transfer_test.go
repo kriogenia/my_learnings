@@ -30,12 +30,12 @@ func createRandomTransfer(t *testing.T, from Account, to Account) Transfer {
 }
 
 func TestCreateTransfer(t *testing.T) {
-	from, to := createRandomAccount(t), createRandomAccount(t)
+	from, to := createRandomAccount(t, createRandomUser(t)), createRandomAccount(t, createRandomUser(t))
 	createRandomTransfer(t, from, to)
 }
 
 func TestGetTransfer(t *testing.T) {
-	from, to := createRandomAccount(t), createRandomAccount(t)
+	from, to := createRandomAccount(t, createRandomUser(t)), createRandomAccount(t, createRandomUser(t))
 	created := createRandomTransfer(t, from, to)
 
 	retrieved, err := testQueries.GetTransfer(context.Background(), created.ID)
@@ -50,7 +50,7 @@ func TestGetTransfer(t *testing.T) {
 }
 
 func TestListTransfers(t *testing.T) {
-	from, to := createRandomAccount(t), createRandomAccount(t)
+	from, to := createRandomAccount(t, createRandomUser(t)), createRandomAccount(t, createRandomUser(t))
 	for i := 0; i < 10; i++ {
 		createRandomTransfer(t, from, to)
 	}

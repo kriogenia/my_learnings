@@ -7,10 +7,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	db "github.com/kriogenia/my_learnings/go_bank/db/sqlc"
+	"github.com/lib/pq"
 )
 
 type createAccountRequest struct {
-	Owner    string `json:"owner" binding:"required"`
+	Owner    int64  `json:"owner" binding:"required"`
 	Currency string `json:"currency" binding:"required,currency"`
 }
 
@@ -27,8 +28,17 @@ func (server *Server) createAccount(ctx *gin.Context) {
 	}
 
 	account, err := server.store.CreateAccount(ctx, args)
-	if handleError(ctx, err, http.StatusInternalServerError) {
-		return
+	if err != nil {
+		var status = http.StatusInternalServerError
+		if pqErr, ok := err.(*pq.Error); ok {
+			switch pqErr.Code.Name() {
+			case "foreign_key_violation", "unique_violation":
+				status = http.StatusForbidden
+			}
+		}
+		if handleError(ctx, err, status) {
+			return
+		}
 	}
 
 	ctx.JSON(http.StatusCreated, account)

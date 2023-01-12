@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createRandomAccount(t *testing.T) Account {
+func createRandomAccount(t *testing.T, user User) Account {
 	arg := CreateAccountParams{
-		Owner:    util.RandomOwner(),
+		Owner:    user.ID,
 		Balance:  util.RandomMoney(),
 		Currency: util.RandomCurrency(),
 	}
@@ -31,11 +31,11 @@ func createRandomAccount(t *testing.T) Account {
 }
 
 func TestCreateAccount(t *testing.T) {
-	createRandomAccount(t)
+	createRandomAccount(t, createRandomUser(t))
 }
 
 func TestGetAccount(t *testing.T) {
-	created := createRandomAccount(t)
+	created := createRandomAccount(t, createRandomUser(t))
 
 	retrieved, err := testQueries.GetAccount(context.Background(), created.ID)
 	require.NoError(t, err)
@@ -49,7 +49,7 @@ func TestGetAccount(t *testing.T) {
 }
 
 func TestGetAccountForUpdate(t *testing.T) {
-	created := createRandomAccount(t)
+	created := createRandomAccount(t, createRandomUser(t))
 
 	retrieved, err := testQueries.GetAccountForUpdate(context.Background(), created.ID)
 	require.NoError(t, err)
@@ -63,7 +63,7 @@ func TestGetAccountForUpdate(t *testing.T) {
 }
 
 func TestUpdateAccount(t *testing.T) {
-	created := createRandomAccount(t)
+	created := createRandomAccount(t, createRandomUser(t))
 	newBalance := util.RandomMoney()
 
 	arg := UpdateAccountParams{
@@ -83,7 +83,7 @@ func TestUpdateAccount(t *testing.T) {
 }
 
 func TestAddAccountBalance(t *testing.T) {
-	created := createRandomAccount(t)
+	created := createRandomAccount(t, createRandomUser(t))
 	amount := util.RandomMoney()
 
 	arg := AddAccountBalanceParams{
@@ -104,7 +104,7 @@ func TestAddAccountBalance(t *testing.T) {
 }
 
 func TestDeleteAccount(t *testing.T) {
-	created := createRandomAccount(t)
+	created := createRandomAccount(t, createRandomUser(t))
 
 	err := testQueries.DeleteAccount(context.Background(), created.ID)
 	require.NoError(t, err)
@@ -117,7 +117,7 @@ func TestDeleteAccount(t *testing.T) {
 
 func TestListAccounts(t *testing.T) {
 	for i := 0; i < 10; i++ {
-		createRandomAccount(t)
+		createRandomAccount(t, createRandomUser(t))
 	}
 
 	arg := ListAccountsParams{

@@ -10,8 +10,8 @@ import (
 func TestTransferTx(t *testing.T) {
 	store := NewStore(testDB)
 
-	from := createRandomAccount(t)
-	to := createRandomAccount(t)
+	from := createRandomAccount(t, createRandomUser(t))
+	to := createRandomAccount(t, createRandomUser(t))
 
 	// run n concurrent transfer transactions
 	n := 5
