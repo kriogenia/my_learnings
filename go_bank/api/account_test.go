@@ -117,8 +117,8 @@ func requireBodyMatchAccount(t *testing.T, body *bytes.Buffer, account db.Accoun
 	data, err := ioutil.ReadAll(body)
 	require.NoError(t, err)
 
-	var gotAccount db.Account
-	err = json.Unmarshal(data, &gotAccount)
+	var retrieved db.Account
+	err = json.Unmarshal(data, &retrieved)
 	require.NoError(t, err)
-	require.Equal(t, gotAccount, account)
+	require.Equal(t, retrieved, account)
 }
