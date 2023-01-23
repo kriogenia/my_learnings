@@ -43,14 +43,17 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 
 func (server *Server) setupRouter() {
 	router := gin.Default()
+
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
 
-	router.GET("/accounts/:id", server.getAccountById)
-	router.GET("/accounts", server.getAccounts)
-	router.POST("/accounts", server.createAccount)
+	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 
-	router.POST("/transfers", server.createTransfer)
+	authRoutes.GET("/accounts/:id", server.getAccountById)
+	authRoutes.GET("/accounts", server.getAccounts)
+	authRoutes.POST("/accounts", server.createAccount)
+
+	authRoutes.POST("/transfers", server.createTransfer)
 	server.router = router
 }
 
@@ -59,10 +62,14 @@ func (server *Server) Start(address string) error {
 	return server.router.Run(address)
 }
 
+func errorResponse(err error) gin.H {
+	return gin.H{"error": err.Error()}
+}
+
 func handleError(ctx *gin.Context, err error, code int) bool {
 	if err != nil {
 		log.Println(err)
-		ctx.JSON(code, gin.H{"error": err.Error()})
+		ctx.JSON(code, errorResponse(err))
 		return true
 	}
 	return false

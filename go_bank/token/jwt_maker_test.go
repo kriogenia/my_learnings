@@ -1,7 +1,6 @@
 package token
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -29,7 +28,7 @@ func TestJWTMaker(t *testing.T) {
 	require.NotEmpty(t, payload)
 
 	require.NotZero(t, payload.ID)
-	require.Equal(t, payload.UserID, fmt.Sprint(userID))
+	require.Equal(t, payload.UserID, userID)
 	require.WithinDuration(t, issuedAt, payload.IssuedAt, time.Second)
 	require.WithinDuration(t, expired_at, payload.ExpiredAt, time.Second)
 }
@@ -49,7 +48,7 @@ func TestExpiredJWTToken(t *testing.T) {
 }
 
 func TestInvalidJWTTokenAlgNone(t *testing.T) {
-	payload, err := NewPayload(util.RandomString(6), time.Minute)
+	payload, err := NewPayload(util.RandomInt(0, 1000), time.Minute)
 	require.NoError(t, err)
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodNone, payload)

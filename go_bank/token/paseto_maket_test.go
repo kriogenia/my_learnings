@@ -1,7 +1,6 @@
 package token
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -28,7 +27,7 @@ func TestPasetoMaker(t *testing.T) {
 	require.NotEmpty(t, payload)
 
 	require.NotZero(t, payload.ID)
-	require.Equal(t, payload.UserID, fmt.Sprint(userID))
+	require.Equal(t, payload.UserID, userID)
 	require.WithinDuration(t, issuedAt, payload.IssuedAt, time.Second)
 	require.WithinDuration(t, expired_at, payload.ExpiredAt, time.Second)
 }
