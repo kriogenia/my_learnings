@@ -50,3 +50,18 @@ func TestGetUser(t *testing.T) {
 	require.WithinDuration(t, created.PasswordChangeAt, retrieved.PasswordChangeAt, time.Second)
 	require.WithinDuration(t, created.CreatedAt, retrieved.CreatedAt, time.Second)
 }
+
+func TestGetUserByUsername(t *testing.T) {
+	created := createRandomUser(t)
+
+	retrieved, err := testQueries.GetUserByUsername(context.Background(), created.Username)
+	require.NoError(t, err)
+	require.NotEmpty(t, retrieved)
+
+	require.Equal(t, created.ID, retrieved.ID)
+	require.Equal(t, created.Username, retrieved.Username)
+	require.Equal(t, created.HashedPassword, retrieved.HashedPassword)
+	require.Equal(t, created.FullName, retrieved.FullName)
+	require.WithinDuration(t, created.PasswordChangeAt, retrieved.PasswordChangeAt, time.Second)
+	require.WithinDuration(t, created.CreatedAt, retrieved.CreatedAt, time.Second)
+}

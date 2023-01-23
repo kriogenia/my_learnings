@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"net/http"
 	"time"
 
@@ -17,13 +18,24 @@ type createUserRequest struct {
 	Email    string `json:"email" binding:"required,email"`
 }
 
-type createUserResponse struct {
+type userResponse struct {
 	ID               int64     `json:"id"`
 	Username         string    `json:"username"`
 	FullName         string    `json:"full_name"`
 	Email            string    `json:"email"`
 	PasswordChangeAt time.Time `json:"password_change_at"`
 	CreatedAt        time.Time `json:"created_at"`
+}
+
+func newUserResponse(user db.User) userResponse {
+	return userResponse{
+		ID:               user.ID,
+		Username:         user.Username,
+		FullName:         user.FullName,
+		Email:            user.Email,
+		PasswordChangeAt: user.PasswordChangeAt,
+		CreatedAt:        user.CreatedAt,
+	}
 }
 
 func (server *Server) createUser(ctx *gin.Context) {
@@ -58,13 +70,50 @@ func (server *Server) createUser(ctx *gin.Context) {
 		}
 	}
 
-	res := createUserResponse{
-		ID:               user.ID,
-		Username:         user.Username,
-		FullName:         user.FullName,
-		Email:            user.Email,
-		PasswordChangeAt: user.PasswordChangeAt,
-		CreatedAt:        user.CreatedAt,
-	}
+	res := newUserResponse(user)
 	ctx.JSON(http.StatusCreated, res)
+}
+
+type loginUserRequest struct {
+	Username string `json:"username" binding:"required,alphanum"`
+	Password string `json:"password" binding:"required,min=6"`
+}
+
+type loginUserResponse struct {
+	AccessToken string       `json:"access_token"`
+	User        userResponse `json:"user"`
+}
+
+func (server *Server) loginUser(ctx *gin.Context) {
+	var req loginUserRequest
+	if err := ctx.ShouldBindJSON(&req); handleError(ctx, err, http.StatusBadRequest) {
+		return
+	}
+
+	user, err := server.store.GetUserByUsername(ctx, req.Username)
+	if err != nil {
+		status := http.StatusInternalServerError
+		if err == sql.ErrNoRows {
+			status = http.StatusNotFound
+		}
+		if handleError(ctx, err, status) {
+			return
+		}
+	}
+
+	err = util.CheckPassword(req.Password, user.HashedPassword)
+	if handleError(ctx, err, http.StatusUnauthorized) {
+		return
+	}
+
+	accessToken, err := server.tokenMaker.CreateToken(user.ID, server.config.AccessTokenDuration)
+	if handleError(ctx, err, http.StatusInternalServerError) {
+		return
+	}
+
+	res := loginUserResponse{
+		AccessToken: accessToken,
+		User:        newUserResponse(user),
+	}
+	ctx.JSON(http.StatusOK, res)
 }
