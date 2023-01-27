@@ -23,12 +23,23 @@ public class ProducerDemo {
 
         log.info(props.toString());
 
-        // create producer and producer record
+        // create producer
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
-        ProducerRecord<String, String> record = new ProducerRecord<>("kafka_java", "Hello World!");
 
         // send data
-        producer.send(record);
+        for (int i = 0; i < 10; i++) {
+            ProducerRecord<String, String> record = new ProducerRecord<>("kafka_java", String.valueOf(i));
+            producer.send(record, (metadata, exception) -> {
+                if (exception == null) {
+                    log.info("TOPIC: " + metadata.topic());
+                    log.info("PARTITION: " + metadata.partition() );
+                    log.info("OFFSET: " + metadata.offset());
+                    log.info("TIMESTAMP: " + metadata.timestamp());
+                } else {
+                    log.error("Error while producing", exception );
+                }
+            });
+        }
 
         // flush and close producer
         producer.flush();
