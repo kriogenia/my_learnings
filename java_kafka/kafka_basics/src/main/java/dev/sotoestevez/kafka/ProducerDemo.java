@@ -12,6 +12,8 @@ public class ProducerDemo {
 
     private static final Logger log = LoggerFactory.getLogger(ProducerDemo.class.getSimpleName());
 
+    private static final String TOPIC = "kafka_java";
+
     public static void main(String[] args) {
         log.info("Hello world!");
 
@@ -28,10 +30,14 @@ public class ProducerDemo {
 
         // send data
         for (int i = 0; i < 10; i++) {
-            ProducerRecord<String, String> record = new ProducerRecord<>("kafka_java", String.valueOf(i));
+            String key = "id_" + i;
+            String value = String.valueOf(i);
+
+            ProducerRecord<String, String> record = new ProducerRecord<>(TOPIC, key,  value);
             producer.send(record, (metadata, exception) -> {
                 if (exception == null) {
                     log.info("TOPIC: " + metadata.topic());
+                    log.info("KEY: " + key);
                     log.info("PARTITION: " + metadata.partition() );
                     log.info("OFFSET: " + metadata.offset());
                     log.info("TIMESTAMP: " + metadata.timestamp());
