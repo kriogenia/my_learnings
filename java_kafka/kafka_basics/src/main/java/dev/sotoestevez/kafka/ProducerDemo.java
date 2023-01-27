@@ -12,13 +12,13 @@ public class ProducerDemo {
 
     private static final Logger log = LoggerFactory.getLogger(ProducerDemo.class.getSimpleName());
 
-    private static final String TOPIC = "kafka_java";
+    public static final String TOPIC = "java_kafka";
 
     public static void main(String[] args) {
-        log.info("Hello world!");
+        log.info("Hello producer!");
 
         // create properties
-        Properties props = new Properties();
+        var props = new Properties();
         props.setProperty("bootstrap.servers", "127.0.0.1:9092");
         props.setProperty("key.serializer", StringSerializer.class.getName());
         props.setProperty("value.serializer", StringSerializer.class.getName());
@@ -26,14 +26,14 @@ public class ProducerDemo {
         log.info(props.toString());
 
         // create producer
-        KafkaProducer<String, String> producer = new KafkaProducer<>(props);
+        var producer = new KafkaProducer<String, String>(props);
 
         // send data
         for (int i = 0; i < 10; i++) {
-            String key = "id_" + i;
-            String value = String.valueOf(i);
+            var key = "id_" + i;
+            var value = String.valueOf(i);
 
-            ProducerRecord<String, String> record = new ProducerRecord<>(TOPIC, key,  value);
+            var record = new ProducerRecord<>(TOPIC, key,  value);
             producer.send(record, (metadata, exception) -> {
                 if (exception == null) {
                     log.info("TOPIC: " + metadata.topic());
