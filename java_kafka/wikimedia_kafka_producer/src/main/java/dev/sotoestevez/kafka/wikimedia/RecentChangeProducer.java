@@ -13,12 +13,14 @@ public class RecentChangeProducer {
     private static final Logger log = LoggerFactory.getLogger(RecentChangeProducer.class.getSimpleName());
 
     private static final URI WIKIMEDIA_URL = URI.create("https://stream.wikimedia.org/v2/stream/recentchange");
+    public static final String TOPIC = "wikimedia.recentchange";
 
     public static void main(String[] args) throws InterruptedException {
         log.info("Starting Wikimedia producer!");
 
-        var producer = ProducerFactory.newProducer();
-        var eventHandler = new RecentChangeHandler(producer, "wikimedia.recentchange");
+        //var producer = ProducerFactory.simpleProducer();
+        var producer = ProducerFactory.highThroughputProducer();
+        var eventHandler = new RecentChangeHandler(producer, TOPIC);
         var eventSource = new EventSource.Builder(eventHandler, WIKIMEDIA_URL).build();
 
         eventSource.start();
