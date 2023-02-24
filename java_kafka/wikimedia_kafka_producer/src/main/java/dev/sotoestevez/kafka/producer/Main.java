@@ -1,6 +1,6 @@
-package dev.sotoestevez.kafka;
+package dev.sotoestevez.kafka.producer;
 
-import dev.sotoestevez.kafka.wikimedia.RecentChangeProducer;
+import dev.sotoestevez.kafka.producer.wikimedia.RecentChangeProducer;
 
 import java.util.concurrent.TimeUnit;
 

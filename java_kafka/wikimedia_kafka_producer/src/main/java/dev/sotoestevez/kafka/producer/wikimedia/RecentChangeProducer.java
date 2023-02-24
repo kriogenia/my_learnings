@@ -1,7 +1,7 @@
-package dev.sotoestevez.kafka.wikimedia;
+package dev.sotoestevez.kafka.producer.wikimedia;
 
 import com.launchdarkly.eventsource.EventSource;
-import dev.sotoestevez.kafka.ProducerFactory;
+import dev.sotoestevez.kafka.producer.ProducerFactory;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class RecentChangeProducer implements Runnable {
 
         //var producer = ProducerFactory.simpleProducer();
         var producer = ProducerFactory.highThroughputProducer();
-        var eventHandler = new RecentChangeHandler(producer, TOPIC);
+        var eventHandler = new dev.sotoestevez.kafka.producer.wikimedia.RecentChangeHandler(producer, TOPIC);
         var eventSource = new EventSource.Builder(eventHandler, WIKIMEDIA_URL).build();
 
         eventSource.start();

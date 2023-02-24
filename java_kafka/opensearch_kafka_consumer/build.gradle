@@ -12,7 +12,8 @@ repositories {
 dependencies {
     implementation 'org.apache.kafka:kafka-clients:3.3.2'
 
-    implementation 'org.opensearch.client:opensearch-java:2.2.0'
+    implementation 'org.opensearch.client:opensearch-rest-client:2.5.0'
+    implementation 'org.opensearch.client:opensearch-java:2.0.0'
 
     implementation 'org.slf4j:slf4j-api:1.7.36'
     implementation 'org.slf4j:slf4j-simple:2.0.5'

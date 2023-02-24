@@ -1,10 +1,11 @@
-version: '3'
+version: '3.7'
 services:
   opensearch:
     image: opensearchproject/opensearch:latest
     container_name: opensearch
     environment:
       discovery.type: single-node
+      plugins.security.disabled: "true"
     ports:
       - "9200:9200" # REST API
       - "9600:9600" # Performance Analyzer
@@ -18,7 +19,8 @@ services:
     expose:
       - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
     environment:
-      OPENSEARCH_HOSTS: '["https://opensearch:9200"]'
+      OPENSEARCH_HOSTS: '["http://opensearch:9200"]'
+      DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"
     networks:
       - opensearch-net
 

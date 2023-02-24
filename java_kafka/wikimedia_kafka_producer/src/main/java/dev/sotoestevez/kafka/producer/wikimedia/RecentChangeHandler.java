@@ -1,4 +1,4 @@
-package dev.sotoestevez.kafka.wikimedia;
+package dev.sotoestevez.kafka.producer.wikimedia;
 
 import com.launchdarkly.eventsource.EventHandler;
 import com.launchdarkly.eventsource.MessageEvent;
