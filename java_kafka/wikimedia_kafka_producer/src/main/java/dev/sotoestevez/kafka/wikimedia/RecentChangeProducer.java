@@ -2,20 +2,27 @@ package dev.sotoestevez.kafka.wikimedia;
 
 import com.launchdarkly.eventsource.EventSource;
 import dev.sotoestevez.kafka.ProducerFactory;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
-public class RecentChangeProducer {
+public class RecentChangeProducer implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(RecentChangeProducer.class.getSimpleName());
 
     private static final URI WIKIMEDIA_URL = URI.create("https://stream.wikimedia.org/v2/stream/recentchange");
     public static final String TOPIC = "wikimedia.recentchange";
 
-    public static void main(String[] args) throws InterruptedException {
+    private final KafkaProducer<String, String> producer;
+
+    public RecentChangeProducer(KafkaProducer<String, String> producer) {
+        this.producer = producer;
+    }
+
+    @Override
+    public void run() {
         log.info("Starting Wikimedia producer!");
 
         //var producer = ProducerFactory.simpleProducer();
@@ -24,8 +31,5 @@ public class RecentChangeProducer {
         var eventSource = new EventSource.Builder(eventHandler, WIKIMEDIA_URL).build();
 
         eventSource.start();
-
-        TimeUnit.MINUTES.sleep(1);
     }
-
 }
