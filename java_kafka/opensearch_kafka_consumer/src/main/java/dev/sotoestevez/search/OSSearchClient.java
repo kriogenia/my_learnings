@@ -1,6 +1,7 @@
 package dev.sotoestevez.search;
 
-import dev.sotoestevez.wikimedia.RecentChange;
+import dev.sotoestevez.indices.SearchIndex;
+import dev.sotoestevez.search.opensearch.OSIndexRequester;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -9,7 +10,6 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
-import org.opensearch.client.opensearch.core.IndexRequest;
 import org.opensearch.client.opensearch.indices.CreateIndexRequest;
 import org.opensearch.client.opensearch.indices.ExistsRequest;
 import org.opensearch.client.transport.rest_client.RestClientTransport;
@@ -59,10 +59,8 @@ public class OSSearchClient implements SearchClient, AutoCloseable {
     }
 
     @Override
-    public void insertDocument(String index, String document) throws IOException {
-        var request = new IndexRequest.Builder<RecentChange>().index(index).document(
-                mapper.objectMapper().readValue(document, RecentChange.class)).build();
-        log.error(request.toString());
+    public <T> void insertDocument(SearchIndex<T> index, String document) throws IOException {
+        var request = new OSIndexRequester<>(index).index(document);
         var response = client.index(request);
         log.info("Inserted one document: {}", response.id());
     }
