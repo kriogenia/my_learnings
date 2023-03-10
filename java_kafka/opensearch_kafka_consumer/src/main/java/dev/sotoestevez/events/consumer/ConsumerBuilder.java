@@ -1,4 +1,4 @@
-package dev.sotoestevez.kafka.consumer;
+package dev.sotoestevez.events.consumer;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -35,6 +35,12 @@ public class ConsumerBuilder {
     @NotNull
     public ConsumerBuilder withOffsetLatest() {
         props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+        return this;
+    }
+
+    @NotNull
+    public ConsumerBuilder withAutoCommit(boolean value) {
+        props.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, String.valueOf(value));
         return this;
     }
 

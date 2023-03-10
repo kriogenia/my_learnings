@@ -1,4 +1,4 @@
-package dev.sotoestevez.wikimedia;
+package dev.sotoestevez.model.wikimedia;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

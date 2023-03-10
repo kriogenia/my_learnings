@@ -1,4 +1,4 @@
-package dev.sotoestevez.kafka;
+package dev.sotoestevez.events;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;

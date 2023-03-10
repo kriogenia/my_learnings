@@ -10,6 +10,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.indices.CreateIndexRequest;
 import org.opensearch.client.opensearch.indices.ExistsRequest;
 import org.opensearch.client.transport.rest_client.RestClientTransport;
@@ -18,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
+import java.util.List;
 
 public class OSSearchClient implements SearchClient, AutoCloseable {
 
@@ -63,6 +66,21 @@ public class OSSearchClient implements SearchClient, AutoCloseable {
         var request = new OSIndexRequester<>(index).index(document);
         var response = client.index(request);
         log.info("Inserted one document: {}", response.id());
+    }
+
+    @Override
+    public <T> void bulkInsertDocument(SearchIndex<T> index, Collection<String> documents) throws IOException {
+        if (documents.isEmpty()) {
+            return;
+        }
+
+        var requester = new OSIndexRequester<>(index);
+        var bulkRequest = new BulkRequest.Builder().index(index.name());
+        for (var document : documents) {
+            var request = requester.indexOperation(document);
+            bulkRequest.operations(b -> b.index(request));
+        }
+        client.bulk(bulkRequest.build());
     }
 
     @Override

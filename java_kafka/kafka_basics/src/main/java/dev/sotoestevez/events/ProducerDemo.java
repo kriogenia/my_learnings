@@ -1,4 +1,4 @@
-package dev.sotoestevez.kafka;
+package dev.sotoestevez.events;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
