@@ -2,4 +2,5 @@ rootProject.name = 'java_kafka'
 include 'kafka_basics'
 include 'wikimedia_kafka_producer'
 include 'opensearch_kafka_consumer'
+include 'wikimedia_kafka_stream'
 

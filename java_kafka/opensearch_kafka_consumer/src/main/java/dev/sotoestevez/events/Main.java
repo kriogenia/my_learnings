@@ -4,6 +4,7 @@ import dev.sotoestevez.events.consumer.ConsumerBuilder;
 import dev.sotoestevez.events.poller.BatchPoll;
 import dev.sotoestevez.indices.Indices;
 import dev.sotoestevez.search.OSSearchClient;
+import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,14 @@ public class Main {
 
                 //singlePoll.poll();
             }
+        } catch (WakeupException wup) {
+            log.info("Consumer starting to shut down");
+        } catch (Exception e) {
+            log.error("Unexpected exception has occurred", e);
+        } finally {
+            consumer.close();
+            client.close();
+            log.info("The consumer and search client have been shut down gracefully");
         }
     }
 }
