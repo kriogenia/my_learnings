@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group 'dev.sotoestevez.kafka'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.apache.kafka:kafka-streams:3.4.0'
+
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'org.slf4j:slf4j-simple:2.0.5'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+}
+
+test {
+    useJUnitPlatform()
+}

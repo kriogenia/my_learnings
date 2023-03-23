@@ -9,6 +9,7 @@ This single repo contains some of the little projects I've made while learning s
 * [Identicon](./elixir_identicon/). <img src="./icons/elixir.svg" height="16px"/> Basic identicon generator made with Elixir.
 * [Invaders](./rust_invaders/) <img src="./icons/rust.svg" height="16px"/> Command-line clone made with Rust of Space Invaders.
 * [Pet Clinic](./spring_pet_clinic/) <img src="./icons/spring.svg" height="16px"/> <img src="./icons/kotlin.svg" height="16px"/> Implementation with Kotlin and Spring 5 of the Pet Clinic sample application. _Unfinished_.
+* [Wikimedia to OpenSearch](./java_kafka) <img src="icons/java.svg" height="16px"/> <img src="icons/kafka.svg" height="16px"/> <img src="icons/opensearch.svg" height="16px"/> Kafka project to poll data from Wikimedia, calculate stats and index it into OpenSearch. It also contains some Kafka demos.
 
 ## Soon
 
@@ -18,12 +19,14 @@ Technologies I plan to learn and will have a new project over here in the furure
 
 ## Technology index
 
+* <img src="./icons/kafka.svg" height="16px"/> Apache Kafka
 * <img src="./icons/elasticsearch.png" height="16px"/> Elastic Search
 * <img src="./icons/elixir.svg" height="16px"/> Elixir
 * <img src="./icons/go.svg" height="16px"/> Go
 * <img src="./icons/java.svg" height="16px"/> Java
 * <img src="./icons/kotlin.svg" height="16px"/> Kotlin
 * <img src="./icons/micronaut.webp" height="16px"/> Micronaut
+* <img src="./icons/opensearch.svg" height="16px"/> OpenSearch
 * <img src="./icons/phoenix.svg" height="16px"/> Phoenix
 * <img src="./icons/postgresql.svg" height="16px"/> PostgreSQL
 * <img src="./icons/rust.svg" height="16px"/> Rust
