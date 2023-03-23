@@ -2,6 +2,7 @@ package dev.sotoestevez.kafka.stream.builder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.sotoestevez.kafka.stream.processor.BotCountStreamProcessor;
+import dev.sotoestevez.kafka.stream.processor.EventCountStreamProcessor;
 import dev.sotoestevez.kafka.stream.processor.StreamProcessor;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -11,6 +12,7 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -30,6 +32,7 @@ public class WikimediaStatsStreamBuilder {
         DEFAULT_STATS_PROCESSORS = new ArrayList<>();
         var mapper = new ObjectMapper();
         DEFAULT_STATS_PROCESSORS.add(new BotCountStreamProcessor(mapper));
+        DEFAULT_STATS_PROCESSORS.add(new EventCountStreamProcessor(mapper, Duration.ofSeconds(10)));
     }
 
     public WikimediaStatsStreamBuilder(String appId, String topic) {

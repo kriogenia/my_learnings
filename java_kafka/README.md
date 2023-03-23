@@ -29,9 +29,11 @@ for the Kafka components of this project to work.
 * The [Wikimedia Kafka Producer](./wikimedia_kafka_producer) is the producer that will read the
 data from Wikimedia and send it to the topic.
 * The [Wikimedia Kafka Stream](./wikimedia_kafka_stream) is a Kafka Stream to read from the topic
-of the recentchanges and compute some statistics out it. It counts the number of articles edited by
-bots, it... and it... Those stats are finally forwarded to different topics where they can be
-indexed into OpenSearch using the [ElasticSearch Service Sink Connector](https://docs.confluent.io/kafka-connectors/elasticsearch/current/overview.html).
+of the recentchanges and compute some statistics out it. The statistics are the following:
+  * Count of the number of articles edited by bots and non-bots
+  * Time series to log how many recent changes happened in 10 second windows.
+  * It... Those stats are finally forwarded to different topics where they can be
+  indexed into OpenSearch using the [ElasticSearch Service Sink Connector](https://docs.confluent.io/kafka-connectors/elasticsearch/current/overview.html).
 * The [OpenSearch Kafka Consumer](./opensearch_kafka_consumer) is the last component. It's a consumer
 to ready to read from topics and index them into OpenSearch. In this project it works to index the data
 read from the recentchanges, but it's not coupled with it. Inside this project is another [Docker compose file](./opensearch_kafka_consumer/docker-compose.yml)
