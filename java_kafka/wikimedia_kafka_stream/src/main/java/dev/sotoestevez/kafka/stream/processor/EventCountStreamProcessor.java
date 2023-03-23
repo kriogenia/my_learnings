@@ -17,10 +17,10 @@ public class EventCountStreamProcessor implements StreamProcessor<String, String
     private static final String TIME_SERIES_STORE = "event-count-store";
     private static final String TIME_SERIES_TOPIC = "wikimedia.stats.timeseries";
 
-    private static final String START_TIME = "start_time";
-    private static final String END_TIME = "end_time";
-    private static final String WINDOW_SIZE = "window_size";
-    private static final String EVENT_COUNT = "event_count";
+    private static final String START_TIME_PROPERTY = "start_time";
+    private static final String END_TIME_PROPERTY = "end_time";
+    private static final String WINDOW_SIZE_PROPERTY = "window_size";
+    private static final String EVENT_COUNT_PROPERTY = "event_count";
 
     private final ObjectMapper mapper;
     private final Duration windowDuration;
@@ -40,15 +40,15 @@ public class EventCountStreamProcessor implements StreamProcessor<String, String
                 .toStream()
                 .mapValues((readOnlyKey, value) -> {
                     final var kvMap = Map.of(
-                            START_TIME, readOnlyKey.window().startTime().toString(),
-                            END_TIME, readOnlyKey.window().endTime().toString(),
-                            WINDOW_SIZE, timeWindows.size(),
-                            EVENT_COUNT, value
+                            START_TIME_PROPERTY, readOnlyKey.window().startTime().toString(),
+                            END_TIME_PROPERTY, readOnlyKey.window().endTime().toString(),
+                            WINDOW_SIZE_PROPERTY, timeWindows.size(),
+                            EVENT_COUNT_PROPERTY, value
                     );
                     try {
                         return mapper.writeValueAsString(kvMap);
                     } catch (JsonProcessingException e) {
-                        log.warn("Error parsing time series info: {}", e.getMessage());
+                        log.error("Error serializing time series info", e);
                         return null;
                     }
                 })
