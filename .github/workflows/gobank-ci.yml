@@ -1,4 +1,4 @@
-name: go-ci
+name: GoBank CI Tests
 
 on:
   push:

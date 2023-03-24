@@ -15,7 +15,8 @@ The REST API has the following features:
 * Authentication using PASETO and JWT.
 * Check of authorization in each operation.
 * Data validation for the input fields.
-* Easy local deployment with the premade commands in the Makefile.
+* Easy local deployment with the premade commands in the Makefile and a docker compose for the release version.
+* Workflows for testing check and container push
 
 ## Deployment
 
