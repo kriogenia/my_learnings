@@ -19,15 +19,8 @@ The REST API has the following features:
 
 ## Deployment
 
-There's a set of steps required to run the application that have been trivialized but need to be conducted. Run in the project root:
+There's a Docker compose file to run the whole environment with ease, it requires Docker:
 
 ```sh
-make network
-make postgres
-make createdb
-make migrateup
-make build
-make release
+docker compose up
 ```
-
-This five steps will set the containers of both the Postgres and the app and all the DB configuration.
