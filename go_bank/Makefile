@@ -1,17 +1,26 @@
 DB_URL=postgresql://root:secret@localhost:5432/gobank?sslmode=disable
-CONTAINER_NAME=gobank-postgres
+APP_IMAGE_NAME=gobank
+APP_CONTAINER_NAME=gobank
+NETWORK_NAME=gobank-network
+POSTGRES_CONTAINER_NAME=gobank-postgres
+
+build:
+	docker build -t $(APP_IMAGE_NAME):latest .
+
+release:
+	docker run --name $(APP_CONTAINER_NAME) --network $(NETWORK_NAME) -p 8080:8080 -e GIN_MODE=release -e DB_SOURCE="postgresql://root:secret@$(POSTGRES_CONTAINER_NAME):5432/gobank?sslmode=disable" $(APP_IMAGE_NAME):latest
 
 postgres:
-	docker run --name $(CONTAINER_NAME) -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:15-alpine
+	docker run --name $(POSTGRES_CONTAINER_NAME) --network $(NETWORK_NAME) -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:15-alpine
 
 startdb:
-	docker start $(CONTAINER_NAME)
+	docker start $(POSTGRES_CONTAINER_NAME)
 
 createdb:
-	docker exec -it $(CONTAINER_NAME) createdb --username=root --owner=root gobank
+	docker exec -it $(POSTGRES_CONTAINER_NAME) createdb --username=root --owner=root gobank
 
 dropdb:
-	docker exec -it $(CONTAINER_NAME) dropdb gobank
+	docker exec -it $(POSTGRES_CONTAINER_NAME) dropdb gobank
 
 migrateup:
 	migrate -path db/migration -database "$(DB_URL)" -verbose up
@@ -37,4 +46,7 @@ server:
 mock:
 	mockgen --package mockdb --destination db/mock/store.go github.com/kriogenia/my_learnings/go_bank/db/sqlc Store
 
-.PHONY: postgres startdb createdb dropdb migrateup migrateuponce migratedown migratedownonce sqlc test server mock
+network:
+	docker network create $(NETWORK_NAME)
+
+.PHONY: build release postgres startdb createdb dropdb migrateup migrateuponce migratedown migratedownonce sqlc test server mock network

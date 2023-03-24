@@ -16,3 +16,18 @@ The REST API has the following features:
 * Check of authorization in each operation.
 * Data validation for the input fields.
 * Easy local deployment with the premade commands in the Makefile.
+
+## Deployment
+
+There's a set of steps required to run the application that have been trivialized but need to be conducted. Run in the project root:
+
+```sh
+make network
+make postgres
+make createdb
+make migrateup
+make build
+make release
+```
+
+This five steps will set the containers of both the Postgres and the app and all the DB configuration.
