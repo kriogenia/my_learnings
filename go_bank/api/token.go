@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	db "github.com/kriogenia/my_learnings/go_bank/db/sqlc"
+	"github.com/kriogenia/my_learnings/go_bank/token"
 )
 
 type renewAccessTokenRequest struct {
@@ -40,19 +42,11 @@ func (server *Server) renewAccessToken(ctx *gin.Context) {
 		}
 	}
 
-	if session.IsBlocked && handleError(ctx, fmt.Errorf("blocked session"), http.StatusUnauthorized) {
-		return
-	}
-
-	if session.UserID != refreshPayload.UserID && handleError(ctx, fmt.Errorf("incorrect session user"), http.StatusUnauthorized) {
+	if !server.isSessionValid(ctx, session, refreshPayload) {
 		return
 	}
 
 	if session.RefreshToken != req.RefreshToken && handleError(ctx, fmt.Errorf("mismatched session token"), http.StatusUnauthorized) {
-		return
-	}
-
-	if time.Now().After(session.ExpiresAt) && handleError(ctx, fmt.Errorf("mismatched session token"), http.StatusUnauthorized) {
 		return
 	}
 
@@ -66,4 +60,19 @@ func (server *Server) renewAccessToken(ctx *gin.Context) {
 		AccessTokenExpiresAt: accessPayload.ExpiredAt,
 	}
 	ctx.JSON(http.StatusOK, res)
+}
+
+func (server *Server) isSessionValid(ctx *gin.Context, session db.Session, refreshPayload *token.Payload) bool {
+	if session.IsBlocked && handleError(ctx, fmt.Errorf("blocked session"), http.StatusUnauthorized) {
+		return false
+	}
+
+	if session.UserID != refreshPayload.UserID && handleError(ctx, fmt.Errorf("incorrect session user"), http.StatusUnauthorized) {
+		return false
+	}
+
+	if time.Now().After(session.ExpiresAt) && handleError(ctx, fmt.Errorf("mismatched session token"), http.StatusUnauthorized) {
+		return false
+	}
+	return true
 }
