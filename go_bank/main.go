@@ -10,10 +10,12 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/kriogenia/my_learnings/go_bank/api"
 	db "github.com/kriogenia/my_learnings/go_bank/db/sqlc"
+	_ "github.com/kriogenia/my_learnings/go_bank/doc/statik"
 	"github.com/kriogenia/my_learnings/go_bank/gapi"
 	"github.com/kriogenia/my_learnings/go_bank/pb"
 	"github.com/kriogenia/my_learnings/go_bank/util"
 	_ "github.com/lib/pq"
+	"github.com/rakyll/statik/fs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -98,8 +100,13 @@ func runGatewayServer(config util.Config, store db.Store) {
 	mux := http.NewServeMux()
 	mux.Handle("/", grpcMux)
 
-	fs := http.FileServer(http.Dir("./doc/openapi"))
-	mux.Handle("/openapi/", http.StripPrefix("/openapi/", fs))
+	statikFS, err := fs.New()
+	if err != nil {
+		log.Fatal("cannont create static fs: ", err)
+	}
+
+	openApiHandler := http.StripPrefix("/openapi/", http.FileServer(statikFS))
+	mux.Handle("/openapi/", openApiHandler)
 
 	listener, err := net.Listen("tcp", config.HTTPServerAddress)
 	if err != nil {

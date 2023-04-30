@@ -44,5 +44,6 @@ proto:
 	--go-grpc_out=pb --go-grpc_opt=paths=source_relative --grpc-gateway_out=pb --grpc-gateway_opt paths=source_relative \
 	--openapiv2_out=doc/openapi --openapiv2_opt=allow_merge=true,merge_file_name=go_bank \
 	proto/*.proto
+	statik -src=./doc/openapi -dest=./doc
 
 .PHONY: postgres startdb createdb dropdb migrateup migrateuponce migratedown migratedownonce sqlc test server mock proto
