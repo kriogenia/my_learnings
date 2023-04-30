@@ -3,10 +3,23 @@ syntax = "proto3";
 package pb;
 
 import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
 import "rpc_create_user.proto";
 import "rpc_login_user.proto";
 
 option go_package = "github.com/kriogenia/my_learnings/go_bank/pb";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+	info: {
+	  title: "GoBank";
+	  version: "1.0";
+	  contact: {
+		name: "GoBank project";
+		url: "https://github.com/kriogenia/my_learnings/tree/main/go_bank";
+		email: "ricardo@sotoestevez.dev";
+	  };
+	}
+};
 
 service GoBank {
 	rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
