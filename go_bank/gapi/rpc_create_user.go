@@ -40,7 +40,7 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 				return nil, status.Error(codes.AlreadyExists, "username or email already exists")
 			}
 		}
-		log.Fatalf("failed to created user: %s", err)
+		log.Fatalf("failed to create user: %s", err)
 		return nil, status.Errorf(codes.Internal, "error creating user")
 	}
 

@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "GoBank",
-    "version": "1.0",
+    "version": "1.1",
     "contact": {
       "name": "GoBank project",
       "url": "https://github.com/kriogenia/my_learnings/tree/main/go_bank",
@@ -84,6 +84,38 @@
           "GoBank"
         ]
       }
+    },
+    "/v1/update_user": {
+      "patch": {
+        "operationId": "GoBank_UpdateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "GoBank"
+        ]
+      }
     }
   },
   "definitions": {
@@ -145,6 +177,35 @@
         "refreshTokenExpiresAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "pbUpdateUserRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser"
         }
       }
     },
