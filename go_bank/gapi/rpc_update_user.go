@@ -17,8 +17,17 @@ import (
 )
 
 func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	authPayload, err := server.authorizeUser(ctx)
+	if err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
 	if violations := validateUpdateUserRequest(req); violations != nil {
 		return nil, invalidArgumentError(violations)
+	}
+
+	if authPayload.UserID != req.GetId() {
+		return nil, status.Error(codes.PermissionDenied, "cannot update other user's info")
 	}
 
 	args := db.UpdateUserParams{
@@ -95,4 +104,8 @@ func toNullString(input *string) sql.NullString {
 		return sql.NullString{String: *input, Valid: true}
 	}
 	return sql.NullString{Valid: false}
+}
+
+func unauthenticatedError(err error) error {
+	return status.Errorf(codes.Unauthenticated, "unauthorized: %s", err)
 }
