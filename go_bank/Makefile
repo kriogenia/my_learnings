@@ -47,4 +47,12 @@ proto:
 	proto/*.proto
 	statik -src=./doc/openapi -dest=./doc
 
-.PHONY: postgres startdb createdb dropdb migrateup migrateuponce migratedown migratedownonce sqlc test server mock proto
+redis:
+	docker run --name redis -p 6379:6379 -d redis:alpine
+
+.PHONY: \
+	server test \
+	mock proto sqlc \
+	postgres startdb createdb dropdb \
+	migrateup migrateuponce migratedown migratedownonce \
+	redis
