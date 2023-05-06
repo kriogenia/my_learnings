@@ -28,14 +28,27 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		return nil, status.Error(codes.Internal, "error creating user")
 	}
 
-	args := db.CreateUserParams{
-		Username:       req.GetUsername(),
-		HashedPassword: hashedPassword,
-		FullName:       req.GetFullName(),
-		Email:          req.GetEmail(),
+	args := db.CreateUserTxParams{
+		CreateUserParams: db.CreateUserParams{
+			Username:       req.GetUsername(),
+			HashedPassword: hashedPassword,
+			FullName:       req.GetFullName(),
+			Email:          req.GetEmail(),
+		},
+		Callback: func(user db.User) error {
+			taskPayload := &worker.PayloadDispatchVerificationEmail{
+				UserID: user.ID,
+			}
+			opts := []asynq.Option{
+				asynq.MaxRetry(10),
+				asynq.ProcessIn(10 * time.Second),
+				asynq.Queue(worker.QUEUE_DEFAULT),
+			}
+			return server.taskDistributor.DistributeDispatchVerificationEmailTask(ctx, taskPayload, opts...)
+		},
 	}
 
-	user, err := server.store.CreateUser(ctx, args)
+	txResult, err := server.store.CreateUserTx(ctx, args)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
@@ -47,21 +60,8 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		return nil, status.Errorf(codes.Internal, "error creating user")
 	}
 
-	// TODO use db transaction
-	taskPayload := &worker.PayloadDispatchVerificationEmail{
-		UserID: user.ID,
-	}
-	opts := []asynq.Option{
-		asynq.MaxRetry(10),
-		asynq.ProcessIn(10 * time.Second),
-		asynq.Queue(worker.QUEUE_DEFAULT),
-	}
-	if server.taskDistributor.DistributeDispatchVerificationEmailTask(ctx, taskPayload, opts...); err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to distribute task to send verify email: %s", err)
-	}
-
 	res := &pb.CreateUserResponse{
-		User: mapUser(user),
+		User: mapUser(txResult.User),
 	}
 	return res, nil
 }
