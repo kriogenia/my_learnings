@@ -15,3 +15,14 @@ WHERE id = $1 LIMIT 1;
 -- name: GetUserByUsername :one
 SELECT * FROM users
 WHERE username = $1 LIMIT 1;
+
+-- name: UpdateUser :one
+UPDATE users
+SET
+	username = COALESCE(sqlc.narg(username), username),
+	hashed_password = COALESCE(sqlc.narg(hashed_password), hashed_password),
+	full_name = COALESCE(sqlc.narg(full_name), full_name),
+	email = COALESCE(sqlc.narg(email), email),
+	password_change_at = COALESCE(sqlc.narg(password_change_at), password_change_at)
+WHERE id = sqlc.arg(id)
+RETURNING *;

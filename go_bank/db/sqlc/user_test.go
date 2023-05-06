@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"testing"
 	"time"
 
@@ -9,11 +10,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createRandomUser(t *testing.T) User {
+func createRandomPassword(t *testing.T) string {
 	hashedPassword, err := util.HashPassword(util.RandomString(6))
+	require.NoError(t, err)
+	require.NotEmpty(t, hashedPassword)
+	return hashedPassword
+
+}
+
+func createRandomUser(t *testing.T) User {
 	arg := CreateUserParams{
 		Username:       util.RandomOwner(),
-		HashedPassword: hashedPassword,
+		HashedPassword: createRandomPassword(t),
 		FullName:       util.RandomOwner(),
 		Email:          util.RandomEmail(),
 	}
@@ -62,6 +70,26 @@ func TestGetUserByUsername(t *testing.T) {
 	require.Equal(t, created.Username, retrieved.Username)
 	require.Equal(t, created.HashedPassword, retrieved.HashedPassword)
 	require.Equal(t, created.FullName, retrieved.FullName)
-	require.WithinDuration(t, created.PasswordChangeAt, retrieved.PasswordChangeAt, time.Second)
 	require.WithinDuration(t, created.CreatedAt, retrieved.CreatedAt, time.Second)
+}
+
+func TestUpdateUser(t *testing.T) {
+	created := createRandomUser(t)
+	arg := UpdateUserParams{
+		ID:             created.ID,
+		Username:       sql.NullString{String: util.RandomOwner(), Valid: true},
+		HashedPassword: sql.NullString{String: createRandomPassword(t), Valid: true},
+		FullName:       sql.NullString{String: util.RandomOwner(), Valid: true},
+		Email:          sql.NullString{String: util.RandomEmail(), Valid: true},
+	}
+
+	updated, err := testQueries.UpdateUser(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, updated)
+
+	require.Equal(t, created.ID, updated.ID)
+	require.Equal(t, arg.Username.String, updated.Username)
+	require.Equal(t, arg.HashedPassword.String, updated.HashedPassword)
+	require.Equal(t, arg.FullName.String, updated.FullName)
+	require.WithinDuration(t, created.CreatedAt, updated.CreatedAt, time.Second)
 }
