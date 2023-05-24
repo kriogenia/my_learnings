@@ -1,8 +1,8 @@
-package actors
+package examples
 
 import akka.actor.{Actor, ActorSystem, Props}
 
-object ActorsIntro extends App {
+object Intro extends App {
 
   // 1. Create actor system
   val actorSystem = ActorSystem("actor_system")
