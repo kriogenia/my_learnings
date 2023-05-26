@@ -1,4 +1,4 @@
-package examples
+package features
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 
@@ -12,8 +12,8 @@ object ActorsState extends App {
     private val CLOSED = "closed"
   }
   private class Session extends Actor {
-    import Session._
     import Client._
+    import Session._
 
     private val state = CLOSED
 
@@ -32,8 +32,8 @@ object ActorsState extends App {
   }
 
   private class StatelessSession extends Actor {
-    import Session._
     import Client._
+    import Session._
 
     override def receive: Receive = unauthorizedRequest
 
