@@ -1,15 +1,10 @@
-package features
+package basic
 
 import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
 import com.typesafe.config.ConfigFactory
+import common.SimpleLoggingActor
 
 object AkkaConfiguration extends App {
-
-  private case class SimpleLoggingActor() extends Actor with ActorLogging {
-    override def receive: Receive = {
-      case message => log.info(message.toString)
-    }
-  }
 
   // 1. Inline configuration
   private val configString =

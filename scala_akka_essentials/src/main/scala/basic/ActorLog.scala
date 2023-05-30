@@ -1,4 +1,4 @@
-package features
+package basic
 import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
 
 import akka.event.Logging
