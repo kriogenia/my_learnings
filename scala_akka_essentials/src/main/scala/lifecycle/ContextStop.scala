@@ -1,4 +1,4 @@
-package fault_tolerance
+package lifecycle
 
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props}
 import common.SimpleLoggingActor
