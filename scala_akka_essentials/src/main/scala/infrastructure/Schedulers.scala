@@ -6,7 +6,7 @@ import common.SimpleLoggingActor
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 
-object Schedule extends App {
+object Schedulers extends App {
 
   private val system = ActorSystem("timers_schedulers_demo")
   private val actor = system.actorOf(Props[SimpleLoggingActor], "actor")

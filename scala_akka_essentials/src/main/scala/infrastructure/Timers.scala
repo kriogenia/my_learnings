@@ -5,7 +5,7 @@ import akka.actor.{Actor, ActorLogging, ActorSystem, Props, Timers}
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 
-object Timer extends App {
+object Timers extends App {
 
   private case object Start
   private case object Reminder
