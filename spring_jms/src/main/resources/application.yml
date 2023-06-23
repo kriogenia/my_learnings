@@ -1,0 +1,4 @@
+spring:
+  artemis:
+    user: admin
+    password: admin
