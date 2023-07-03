@@ -1,13 +1,9 @@
 package examples
 
-import akka.actor.ActorSystem
 import akka.stream.scaladsl.Source
-import akka.stream.{Materializer, SystemMaterializer}
+import common.StreamApp
 
-object NameFilter extends App {
-
-  private val actorSystem = ActorSystem("name-filter")
-  private implicit val materializer: Materializer = SystemMaterializer(actorSystem).materializer
+object NameFilter extends StreamApp {
 
   private val names = List("Joey", "Chandler", "Monica", "Phoebe", "Rachel", "Ross")
   private val minLength = 5

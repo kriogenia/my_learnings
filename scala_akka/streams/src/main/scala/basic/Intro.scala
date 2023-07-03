@@ -1,16 +1,12 @@
 package basic
 
-import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Sink, Source}
-import akka.stream.{Materializer, SystemMaterializer}
+import common.StreamApp
 
 import scala.concurrent.Future
 
 //noinspection ScalaUnusedSymbol
-object Intro extends App {
-
-  private val actorSystem = ActorSystem("first-principles")
-  private implicit val materializer: Materializer = SystemMaterializer(actorSystem).materializer
+object Intro extends StreamApp {
 
   // Sources emits elements
   private val source = Source(1 to 10)
