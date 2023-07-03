@@ -10,7 +10,7 @@ import scala.concurrent.ExecutionContextExecutor
  */
 trait StreamApp extends App {
 
-  private val actorSystem = ActorSystem("stream-app")
+  val actorSystem = ActorSystem("stream-app")
   implicit val materializer: Materializer = SystemMaterializer(actorSystem).materializer
   implicit val executionContext: ExecutionContextExecutor = materializer.executionContext
 
