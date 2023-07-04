@@ -21,7 +21,7 @@ object Basics extends StreamApp {
 
   // 1. Set up the fundamentals for the graph
   private val graph = RunnableGraph.fromGraph(
-    GraphDSL.create() { implicit  builder: GraphDSL.Builder[NotUsed] =>
+    GraphDSL.create() { implicit builder: GraphDSL.Builder[NotUsed] =>
       import GraphDSL.Implicits._
 
       // 2. Add the necessary components of the graph
