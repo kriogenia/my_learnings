@@ -1,7 +1,7 @@
 package graphs
 
 import akka.stream.{FlowShape, SinkShape, SourceShape}
-import akka.stream.scaladsl.GraphDSL.Implicits.{SourceArrow, fanOut2flow}
+import akka.stream.scaladsl.GraphDSL.Implicits.{SourceArrow, fanOut2flow, flow2flow}
 import akka.stream.scaladsl.{Broadcast, Concat, Flow, GraphDSL, Sink, Source, Zip}
 import common.StreamApp
 
@@ -71,7 +71,7 @@ object OpenGraphs extends StreamApp {
   sinkGraph.runWith(Source(1 to 100))
 
   /*
-    A complex flow composed of two flows:
+    A complex flow composed of two consecutive flows:
       - the first one adds one to the number
       - the second one multiplies the number by 10
    */
@@ -80,26 +80,23 @@ object OpenGraphs extends StreamApp {
   private val mulFlow = Flow[Int].map(_ * 10)
 
   /*
-    +-----------------------+
-    |                       |
-    |  + --> sumFlow ---+   |
-  -----|                |===--->
-    |  + --> mulFlow ---+   |
-    |                       |
-    +-----------------------+
+    +---------------------------+
+    |                           |
+  -----> sumFlow ---> mulFlow ---->
+    |                           |
+    +---------------------------+
    */
 
   private val flowGraph = Flow.fromGraph(
     GraphDSL.create() { implicit builder =>
-      val broadcast = builder.add(Broadcast[Int](2))
-      val zip = builder.add(Zip[Int, Int]())
+      val sum = builder.add(sumFlow)
+      val mul = builder.add(mulFlow)
 
-      broadcast ~> sumFlow ~> zip.in0
-      broadcast ~> mulFlow ~> zip.in1
+      sum ~> mul
 
-      FlowShape(broadcast.in, zip.out)
+      FlowShape(sum.in, mul.out)
     }
   )
-  flowGraph.runWith(Source(1 to 100), Sink.foreach[(Int, Int)](println))
+  flowGraph.runWith(Source(1 to 100), Sink.foreach[Int](i => println(s"flow > $i")))
 
 }
