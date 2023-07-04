@@ -17,6 +17,12 @@ object MergeBalance extends StreamApp {
   private val leftSink = Sink.foreach[String](i => println(s"LEFT\t$i"))
   private val rightSink = Sink.foreach[String](i => println(s"RIGHT\t$i"))
 
+  /*
+      fastSource ---+                         +--> leftSink
+                    |--> merge ---> balance --|
+      slowSource ---+                         +--> rightSink
+   */
+
   private val graph = RunnableGraph.fromGraph(
     GraphDSL.create() { implicit builder: GraphDSL.Builder[NotUsed] =>
       import GraphDSL.Implicits._

@@ -41,6 +41,14 @@ object EventBroadcast extends StreamApp {
     case _ =>
   }
 
+  /*
+              +--> logger
+              |
+    source ---+--> ticket
+              |
+              +--> stats
+   */
+
   private val graph = RunnableGraph.fromGraph(
     GraphDSL.create() { implicit builder: GraphDSL.Builder[NotUsed] =>
       import GraphDSL.Implicits._

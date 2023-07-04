@@ -6,7 +6,7 @@ import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, RunnableGraph, Sink, Sou
 import common.StreamApp
 
 
-object Basics extends StreamApp {
+object ClosedGraphs extends StreamApp {
 
   private val input = Source(1 to 100)
   private val sumFlow = Flow[Int].map(_ + 1)        // assumed hard computation
