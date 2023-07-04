@@ -18,16 +18,16 @@ object Max3FanIn extends StreamApp {
   private val sink = Sink.foreach(println)
 
   /*
-    +---------------------------+
-    |                           |
-  ------+                       |
-    |   |--> max1 --+           |
-  ------+           |           |
-    |               |--> max2 ----->
-    |               |           |
-  ------------------+           |
-    |                           |
-    +---------------------------+
+        +---------------------------+
+        |                           |
+  Int ------+                       |
+        |   |--> max1 --+           |
+  Int ------+           |           |
+        |               |--> max2 -----> Int
+        |               |           |
+  Int ------------------+           |
+        |                           |
+        +---------------------------+
    */
 
   private val max3StaticGraph = GraphDSL.create() { implicit builder =>
