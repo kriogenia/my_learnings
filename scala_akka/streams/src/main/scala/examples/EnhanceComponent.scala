@@ -35,8 +35,7 @@ object EnhanceComponent extends StreamApp {
 
   private def runEnhanced(tag: String, flow: Flow[Int, _, _], limit: Int): Future[Int] = {
     val enhanced = enhanceFlowWithCount(flow)
-    val printTag = (v: Any) => println(s"$tag: $v")
-    Source(1 to limit).viaMat(enhanced)(Keep.right).toMat(Sink.foreach(printTag))(Keep.left).run
+    Source(1 to limit).viaMat(enhanced)(Keep.right).toMat(printSink(tag))(Keep.left).run
   }
 
   runEnhanced("S", sum, 100).onComplete(i => println(s"The number of sums is $i"))

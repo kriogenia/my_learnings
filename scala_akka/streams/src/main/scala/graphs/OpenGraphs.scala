@@ -45,8 +45,8 @@ object OpenGraphs extends StreamApp {
     A complex sink that broadcast the content to two sinks
    */
 
-  private val sinkLeft = Sink.foreach[Int](x => println(s"LEFT\t$x"))
-  private val sinkRight = Sink.foreach[Int](x => println(s"RIGHT\t$x"))
+  private val sinkLeft = printSink[Int]("LEFT")
+  private val sinkRight = printSink[Int]("RIGHT")
 
   /*
     +-------------------------------+
@@ -95,6 +95,6 @@ object OpenGraphs extends StreamApp {
       FlowShape(sum.in, mul.out)
     }
   )
-  flowGraph.runWith(Source(1 to 100), Sink.foreach[Int](i => println(s"flow > $i")))
+  flowGraph.runWith(Source(1 to 100), printSink[Int]("flow >"))
 
 }

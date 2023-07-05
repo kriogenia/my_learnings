@@ -9,10 +9,9 @@ object OperatorFusion extends StreamApp {
   private val source = Source(1 to 10)
   private val addFlow = Flow[Int].map(_ + 1)
   private val mulFlow = Flow[Int].map(_ * 10)
-  private def sink(tag: String) = Sink.foreach[Int](i => println(s"$tag > $i"))
 
   // Operator/component fusion
-  source.via(addFlow).via(mulFlow).to(sink("fusion")).run() // this runs on the same actor
+  source.via(addFlow).via(mulFlow).to(printSink[Int]("fusion")).run() // this runs on the same actor
 
   // Equivalent (kinda) to the following actor
   private class SimpleActor extends Actor {
@@ -37,12 +36,12 @@ object OperatorFusion extends StreamApp {
       Thread.sleep(500)
       x * 10
   }
-  source.via(complexAddFlow).via(complexMulFlow).to(sink("complex")).run()   // 2s per action, costly
+  source.via(complexAddFlow).via(complexMulFlow).to(printSink[Int]("complex")).run()   // 2s per action, costly
 
   // Specifying async boundaries to "detach" costly tasks
   source.via(complexAddFlow).async    // runs on one actor
     .via(complexMulFlow).async
-    .to(sink("async_boundary"))
+    .to(printSink[Int]("async_boundary"))
     .run()
 
   // Ordering guarantees

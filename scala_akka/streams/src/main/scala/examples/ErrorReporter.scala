@@ -22,8 +22,8 @@ object ErrorReporter extends StreamApp {
     Response(403, "You can't access this resource")
   )
 
-  private val connection = Sink.foreach(println)
-  private val errorReporter = Sink.foreach[Int](code => println(s"[WARN] Failed request: $code"))
+  private val connection = printSink("")
+  private val errorReporter = printSink[Int](s"[WARN] Failed request:")
 
   /*
               +---------------------------------+

@@ -14,8 +14,8 @@ object MergeBalance extends StreamApp {
   private val fastSource = input.throttle(5, 10 millis).map(i => s"f$i")
   private val slowSource = input.throttle(2, 10 millis).map(i => s"s$i")
 
-  private val leftSink = Sink.foreach[String](i => println(s"LEFT\t$i"))
-  private val rightSink = Sink.foreach[String](i => println(s"RIGHT\t$i"))
+  private val leftSink = printSink[String]("LEFT")
+  private val rightSink = printSink[String]("RIGHT")
 
   /*
       fastSource ---+                         +--> leftSink

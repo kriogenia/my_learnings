@@ -22,19 +22,19 @@ object MaterializingStreams extends StreamApp {
   // Choosing materialized values
   private val simpleSource = Source(1 to 10)
   private val simpleFlow = Flow[Int].map(_ + 1)
-  private val simpleSink = Sink.foreach[Int](i => println(s"matGraph > $i"))
+  private val simpleSink = printSink[Int]("matGraph >")
   private val graph = simpleSource.viaMat(simpleFlow)(Keep.left).toMat(simpleSink)(Keep.right)
   graph.run().onComplete {
-    case Success(_) => println("matGraph > Stream processing finished")
-    case Failure(exception) => println(s"matGraph > Stream processing failed with $exception")
+    case Success(_) => println("matGraph >\tStream processing finished")
+    case Failure(exception) => println(s"matGraph >\tStream processing failed with $exception")
   }
 
   Source(1 to 10).runWith(Sink.reduce[Int](_ + _))  // source.toMat(Sink.reduce)(Keep.right)
   Source(1 to 10).runReduce(_ + _)                  // source.toMat(Sink.reduce)(Keep.right)
 
-  Sink.foreach[Int](i => println(s"backwards > $i")).runWith(Source.single(42))   // backwards
+  printSink[Int]("backwards >").runWith(Source.single(42))   // backwards
 
-  Flow[Int].map(_ * 2).runWith(simpleSource, Sink.foreach[Int](i => println(s"bothWays > $i")))   // both ways
+  Flow[Int].map(_ * 2).runWith(simpleSource, printSink[Int](s"bothWays >"))   // both ways
 
   // Return the last element of a source
   Source(1 to 10).runWith(Sink.last).onComplete {
