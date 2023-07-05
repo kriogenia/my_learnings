@@ -18,11 +18,9 @@ object OpenGraphs extends StreamApp {
 
   /*
     +-------------------------------+
-    |                               |
     | firstSource ----+             |
     |                 |--> concat ----->
     | secondSource ---+             |
-    |                               |
     +-------------------------------+
    */
 

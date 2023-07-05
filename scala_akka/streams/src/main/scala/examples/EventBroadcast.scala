@@ -43,9 +43,7 @@ object EventBroadcast extends StreamApp {
 
   /*
               +--> logger
-              |
     source ---+--> ticket
-              |
               +--> stats
    */
 

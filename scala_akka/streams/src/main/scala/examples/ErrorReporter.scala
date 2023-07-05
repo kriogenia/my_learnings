@@ -27,13 +27,9 @@ object ErrorReporter extends StreamApp {
 
   /*
               +---------------------------------+
-              |                                 |
               |   +---------------------------------> Response
-              |   |                             |
   Response -------|                             |
-              |   |                             |
               |   +--> filter --> codeMapper -------> Int
-              |                                 |
               +---------------------------------+
    */
 
@@ -48,13 +44,9 @@ object ErrorReporter extends StreamApp {
 
   /*
             +-------------------------+
-            |                         |
             |   +---> connection      |
-            |   |                     |
   Response -----|                     |
-            |   |                     |
             |   +---> errorReporter   |
-            |                         |
             +-------------------------+
    */
 
