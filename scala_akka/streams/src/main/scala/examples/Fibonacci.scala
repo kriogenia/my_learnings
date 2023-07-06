@@ -13,7 +13,7 @@ object Fibonacci extends StreamApp {
   /*
           +-----------------------------------------------+
           |              start ----+              +-----+ |
-          |                        |-> queue ---> 0    | |
+          |                        |-> queue ---> 0     | |
           |                   +----+              |     | |
     Int ----> inputBroadcast -|                   |     -----> (Int, Int)
                               +------------------> 1    | |
