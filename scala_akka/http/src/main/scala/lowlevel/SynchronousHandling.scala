@@ -5,16 +5,12 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.IncomingConnection
 import akka.http.scaladsl.model._
 import akka.stream.scaladsl.Sink
+import common.HttpApp
 
 import scala.language.postfixOps
 
-object SynchronousHandling extends App {
+object SynchronousHandling extends HttpApp {
 
-  private implicit val actorSystem: ActorSystem = ActorSystem("low-level")
-
-  /*
-    Serving HTTP responses synchronously
-   */
   private val requestHandler: HttpRequest => HttpResponse = {
     case HttpRequest(HttpMethods.GET, _, _, _, _) =>
       HttpResponse(
