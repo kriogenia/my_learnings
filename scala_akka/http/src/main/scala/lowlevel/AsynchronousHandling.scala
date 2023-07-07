@@ -13,13 +13,14 @@ object AsynchronousHandling extends HttpApp {
   import actorSystem.dispatcher // recommended to use a different dispatcher
 
   private val requestHandler: HttpRequest => Future[HttpResponse] = {
-    case HttpRequest(HttpMethods.GET, Uri.Path("/home"), _, _, _) => Future(HttpResponse(
+    case HttpRequest(HttpMethods.GET, Uri.Path("/async"), _, _, _) => Future(HttpResponse(
         StatusCodes.OK,
         entity = HttpEntity(
           ContentTypes.`application/json`,
           """
             |{
-            | "response": "Alabama"
+            | "hello": "world",
+            | "sender": "Asynchronous Akka HTTP"
             |}
             |""".stripMargin
         )
@@ -35,10 +36,10 @@ object AsynchronousHandling extends HttpApp {
       ))
   }
 
-  Http().newServerAt("localhost", 8080).bind(requestHandler)
+  Http().newServerAt(host, defaultPort).bind(requestHandler)
 
   // Alternative
-  Http().newServerAt("localhost", 8081)
+  Http().newServerAt(host, altPort)
     .connectionSource()
     .runWith(Sink.foreach[IncomingConnection](_.handleWithAsyncHandler(requestHandler)))
 

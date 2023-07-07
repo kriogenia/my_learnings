@@ -12,7 +12,7 @@ import scala.language.postfixOps
 object SynchronousHandling extends HttpApp {
 
   private val requestHandler: HttpRequest => HttpResponse = {
-    case HttpRequest(HttpMethods.GET, _, _, _, _) =>
+    case HttpRequest(HttpMethods.GET, Uri.Path("/sync"), _, _, _) =>
       HttpResponse(
         StatusCodes.OK,
         entity = HttpEntity(
@@ -20,7 +20,7 @@ object SynchronousHandling extends HttpApp {
           """
             |<html>
             | <body>
-            |   Hello world! This is Akka HTTP
+            |   Hello world! This is synchronous Akka HTTP
             | </body>
             |</html>
             |""".stripMargin
@@ -43,10 +43,10 @@ object SynchronousHandling extends HttpApp {
       )
   }
 
-  Http().newServerAt("localhost", 8080).bindSync(requestHandler)
+  Http().newServerAt(host, defaultPort).bindSync(requestHandler)
 
   // Alternative
-  Http().newServerAt("localhost", 8081)
+  Http().newServerAt(host, altPort)
     .connectionSource()
     .runWith(Sink.foreach[IncomingConnection] (_.handleWithSyncHandler(requestHandler)))
 
