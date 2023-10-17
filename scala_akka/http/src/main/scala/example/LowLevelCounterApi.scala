@@ -11,7 +11,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 
-object LowLevelServer extends HttpApp {
+object LowLevelCounterApi extends HttpApp {
 
   /*
     Low-level server API managing a counter with GET, POST and DELETE /count endpoints
