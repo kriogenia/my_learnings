@@ -3,11 +3,12 @@ package client
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest, StatusCodes, Uri}
 import akka.http.scaladsl.server.Directives._
 import akka.pattern.ask
+import client.PaymentSystemDomain.PaymentRequest
 import common.HttpApp
-import spray.json.{DefaultJsonProtocol, RootJsonFormat}
+import spray.json._
 
 case class CreditCard(number: String, cvc: String, owner: String)
 
@@ -34,6 +35,23 @@ class PaymentValidator extends Actor with ActorLogging {
         sender() ! PaymentAccepted
       }
   }
+}
+
+object PaymentSystemExample extends PaymentJsonProtocol {
+  val httpRequests: Seq[HttpRequest] = List(
+    CreditCard("1234-1234-1234-1234", "123", "Owner McOwner"),
+    CreditCard("1234", "124", "Too short"),
+    CreditCard("1234-1234-1234-1236", "125", "Credit Cardson"),
+  )
+    .map(cc => PaymentRequest(cc, "store", 99))
+    .map(pr => HttpRequest(
+      HttpMethods.POST,
+      uri = Uri("/api/payments"),
+      entity = HttpEntity(
+        ContentTypes.`application/json`,
+        pr.toJson.prettyPrint,
+      ),
+    ))
 }
 
 object PaymentSystem extends HttpApp with PaymentJsonProtocol with SprayJsonSupport {
