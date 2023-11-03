@@ -3,7 +3,7 @@ package client
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.stream.scaladsl.{Sink, Source}
-import client.PaymentSystemExample.httpRequests
+import client.PaymentSystemExample.{httpRequests, route}
 import common.HttpApp
 
 import scala.util.{Failure, Success}
@@ -22,7 +22,7 @@ object ConnectionLevel extends HttpApp {
   }
 
   // Payment system
-  Source(httpRequests)
+  Source(httpRequests(route))
     .via(Http().outgoingConnection(host, defaultPort))
     .to(Sink.foreach[HttpResponse](println))
     .run

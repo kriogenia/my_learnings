@@ -3,7 +3,7 @@ package client
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
 import akka.stream.scaladsl.{Sink, Source}
-import client.PaymentSystemExample.httpRequests
+import client.PaymentSystemExample.{httpRequests, route}
 import common.HttpApp
 
 import java.util.UUID
@@ -25,7 +25,8 @@ object HostLevel extends HttpApp {
     }
     .runWith(Sink.foreach[String](println))
 
-  Source(httpRequests.map((_, UUID.randomUUID().toString)))
+  // Payment system
+  Source(httpRequests(route).map((_, UUID.randomUUID().toString)))
     .via(Http().cachedHostConnectionPool[String](host, defaultPort))
     .runForeach {
       case (Success(res@HttpResponse(StatusCodes.Forbidden, _, _, _)), orderId) =>

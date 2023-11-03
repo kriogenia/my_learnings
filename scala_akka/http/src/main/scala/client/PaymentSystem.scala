@@ -38,7 +38,7 @@ class PaymentValidator extends Actor with ActorLogging {
 }
 
 object PaymentSystemExample extends PaymentJsonProtocol {
-  val httpRequests: Seq[HttpRequest] = List(
+  def httpRequests(uri: String): Seq[HttpRequest] = List(
     CreditCard("1234-1234-1234-1234", "123", "Owner McOwner"),
     CreditCard("1234", "124", "Too short"),
     CreditCard("1234-1234-1234-1236", "125", "Credit Cardson"),
@@ -46,12 +46,14 @@ object PaymentSystemExample extends PaymentJsonProtocol {
     .map(cc => PaymentRequest(cc, "store", 99))
     .map(pr => HttpRequest(
       HttpMethods.POST,
-      uri = Uri("/api/payments"),
+      uri = Uri(uri),
       entity = HttpEntity(
         ContentTypes.`application/json`,
         pr.toJson.prettyPrint,
       ),
     ))
+
+  val route = "/api/payments"
 }
 
 object PaymentSystem extends HttpApp with PaymentJsonProtocol with SprayJsonSupport {
