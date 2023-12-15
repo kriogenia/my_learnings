@@ -1,0 +1,19 @@
+[workspace]
+members = [
+  "recho"
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = [ "Kriogenia <ricardo@sotoestevez.dev>"]
+
+[workspace.dependencies]
+assert_cmd = "2"
+clap = { version = "4.4", default-features = false, features = [
+  "std",
+  "derive",
+  "help"
+]}
+predicates = "3"
+
