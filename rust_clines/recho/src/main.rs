@@ -1,3 +1,5 @@
+mod echo;
+
 fn main() {
-    println!("Hello, world!");
+    let _ = echo::Echo::parse().run();
 }
