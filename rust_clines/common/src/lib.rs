@@ -1,5 +1,7 @@
 use clap::Parser;
 
+pub mod file;
+
 pub type RunResult = Result<(), String>;
 
 pub trait CommandClone {

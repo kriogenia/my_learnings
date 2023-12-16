@@ -1,10 +1,7 @@
-use std::{
-    fs::File,
-    io::{self, BufRead, BufReader},
-};
+use std::io::BufRead;
 
 use clap::Parser;
-use common::{CommandClone, RunResult};
+use common::{file::open_file_or_stdin, CommandClone, RunResult};
 
 const STDIN_ARG: &str = "-";
 
@@ -38,8 +35,8 @@ impl CommandClone for Cat {
         let mut current_line = 0;
 
         for filename in args.files.iter() {
-            let buffer =
-                open(filename).map_err(|msg| format!("Failed to open {filename}: {msg}"))?;
+            let buffer = open_file_or_stdin(filename)
+                .map_err(|msg| format!("Failed to open {filename}: {msg}"))?;
             for line in buffer.lines() {
                 let line = line.map_err(|err| format!("Error reading {filename}: {err}"))?;
 
@@ -59,16 +56,5 @@ impl CommandClone for Cat {
             }
         }
         Ok(())
-    }
-}
-
-fn open(filename: &str) -> Result<Box<dyn BufRead>, String> {
-    if filename == STDIN_ARG {
-        return Ok(Box::new(BufReader::new(io::stdin())));
-    }
-
-    match File::open(filename) {
-        Ok(file) => Ok(Box::new(BufReader::new(file))),
-        Err(error) => Err(format!("{}", error)),
     }
 }
