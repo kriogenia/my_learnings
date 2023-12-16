@@ -3,6 +3,7 @@ members = [
   "common",
   "rcat",
   "recho",
+  "rhead",
 ]
 
 [workspace.package]
