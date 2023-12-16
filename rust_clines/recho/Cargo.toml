@@ -5,9 +5,10 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
-clap = { workspace = true }
+clap.workspace = true
+common = { path = "../common" }
 
 [dev-dependencies]
-assert_cmd = { workspace = true }
-predicates = { workspace = true }
+assert_cmd.workspace = true
+predicates.workspace = true
 

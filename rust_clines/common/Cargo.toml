@@ -1,0 +1,9 @@
+[package]
+name = "common"
+description = "Common traits and utils for all clones"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+clap = { workspace = true }
+

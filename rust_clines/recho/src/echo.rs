@@ -1,39 +1,24 @@
-use std::{error::Error, fmt::Display};
-
 use clap::Parser;
+use common::CommandClone;
 
 #[derive(Debug, Parser)]
 #[command(author, version, about)]
-struct Args {
+pub struct Args {
     #[arg(required = false, help = "Input text")]
     text: Option<Vec<String>>,
     #[arg(default_value = "false", short = 'n', help = "Do not print newline")]
     omit_newline: bool,
 }
 
-pub struct Echo {
-    text: String,
-}
+pub struct Echo;
 
-impl Echo {
-    pub fn parse() -> Self {
-        let args = Args::parse();
-        let text = format!(
+impl CommandClone<Args> for Echo {
+    fn run_with_args(args: Args) -> common::RunResult {
+        print!(
             "{}{}",
-            args.text.unwrap_or(vec!["".to_owned()]).join(" "),
+            args.text.unwrap_or(vec![]).join(" "),
             if args.omit_newline { "" } else { "\n" }
         );
-        Self { text }
-    }
-
-    pub fn run(&self) -> Result<(), Box<dyn Error>> {
-        print!("{}", self);
         Ok(())
-    }
-}
-
-impl Display for Echo {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.text)
     }
 }
