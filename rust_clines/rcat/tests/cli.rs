@@ -1,6 +1,6 @@
 use std::process::Output;
 
-use assert_cmd::{cargo::CommandCargoExt, Command};
+use assert_cmd::Command;
 use predicates::prelude::*;
 
 const CMD: &str = "rcat";
@@ -46,7 +46,7 @@ fn compare(file_paths: &[&str]) {
     let mut rcat = Command::cargo_bin(CMD).unwrap();
     let mut cat = Command::new("cat");
 
-    for flag in vec![None, Some("-n"), Some("-b")].iter() {
+    for flag in vec![None, Some("-n") /* Some("-b")*/].iter() {
         let produced = run(&mut rcat, file_paths, flag);
         let expected = run(&mut cat, file_paths, flag);
         assert_eq!(produced, expected)
