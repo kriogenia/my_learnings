@@ -1,8 +1,6 @@
-use std::error::Error;
-
 use clap::Parser;
 
-pub type RunResult = Result<(), Box<dyn Error>>;
+pub type RunResult = Result<(), String>;
 
 pub trait CommandClone<T: Parser> {
     fn run() -> RunResult {

@@ -1,6 +1,6 @@
 use std::process::Output;
 
-use assert_cmd::Command;
+use assert_cmd::{cargo::CommandCargoExt, Command};
 use predicates::prelude::*;
 
 const CMD: &str = "rcat";
@@ -14,7 +14,7 @@ fn no_args() {
         .unwrap()
         .assert()
         .failure()
-        .stderr(predicate::str::contains("USAGE"));
+        .stderr(predicate::str::contains("Usage"));
 }
 
 #[test]
@@ -30,6 +30,16 @@ fn multi_line_file() {
 #[test]
 fn multiple_files() {
     compare(&[SINGLE_TXT, MULTI_TXT])
+}
+
+#[test]
+fn invalid_file() {
+    Command::cargo_bin(CMD)
+        .unwrap()
+        .arg("invalid_file.txt")
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("No such file or directory"));
 }
 
 fn compare(file_paths: &[&str]) {
