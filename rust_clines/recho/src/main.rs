@@ -1,7 +1,7 @@
-use common::CommandClone;
+use common::run_command;
 
 mod echo;
 
 fn main() {
-    let _ = echo::Echo::run();
+    run_command::<echo::Echo>();
 }

@@ -1,10 +1,7 @@
-use common::CommandClone;
+use common::run_command;
 
 mod cat;
 
 fn main() {
-    if let Err(e) = cat::Cat::run() {
-        eprintln!("{}", e);
-        std::process::exit(1)
-    }
+    run_command::<cat::Cat>();
 }

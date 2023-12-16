@@ -2,11 +2,20 @@ use clap::Parser;
 
 pub type RunResult = Result<(), String>;
 
-pub trait CommandClone<T: Parser> {
+pub trait CommandClone {
+    type Args: Parser;
+
     fn run() -> RunResult {
-        let args = T::parse();
+        let args = Self::Args::parse();
         Self::run_with_args(args)
     }
 
-    fn run_with_args(args: T) -> RunResult;
+    fn run_with_args(args: Self::Args) -> RunResult;
+}
+
+pub fn run_command<T: CommandClone>() {
+    if let Err(e) = T::run() {
+        eprintln!("{}", e);
+        std::process::exit(1)
+    }
 }

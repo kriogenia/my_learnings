@@ -31,8 +31,10 @@ pub struct Args {
 
 pub struct Cat;
 
-impl CommandClone<Args> for Cat {
-    fn run_with_args(args: Args) -> RunResult {
+impl CommandClone for Cat {
+    type Args = Args;
+
+    fn run_with_args(args: Self::Args) -> RunResult {
         let mut current_line = 0;
 
         for filename in args.files.iter() {
@@ -42,7 +44,7 @@ impl CommandClone<Args> for Cat {
                 let line = line.map_err(|err| format!("Error reading {filename}: {err}"))?;
 
                 let prefix = match (args.number_lines, args.number_non_empty_lines) {
-                    (_, true) if line.is_empty() => {
+                    (_, true) if !line.is_empty() => {
                         current_line += 1;
                         format!("{current_line:>6}\t")
                     }

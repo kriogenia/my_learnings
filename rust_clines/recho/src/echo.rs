@@ -12,8 +12,10 @@ pub struct Args {
 
 pub struct Echo;
 
-impl CommandClone<Args> for Echo {
-    fn run_with_args(args: Args) -> common::RunResult {
+impl CommandClone for Echo {
+    type Args = Args;
+
+    fn run_with_args(args: Self::Args) -> common::RunResult {
         print!(
             "{}{}",
             args.text.unwrap_or(vec![]).join(" "),
