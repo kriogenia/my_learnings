@@ -42,6 +42,16 @@ fn bytes() {
 }
 
 #[test]
+fn lines_and_bytes() {
+    Command::cargo_bin(CLONE)
+        .unwrap()
+        .args(&["/tests/inputs/empty.txt", "-n", "10", "-c", "10"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("cannot be used with"));
+}
+
+#[test]
 fn invalid_file() {
     Command::cargo_bin(CLONE)
         .unwrap()
@@ -53,6 +63,7 @@ fn invalid_file() {
 
 fn compare(flags: &[&str]) {
     for file in FILES {
+        print!("{file}");
         let produced = run_command(&mut Command::cargo_bin(CLONE).unwrap(), &[file], flags);
         let expected = run_command(&mut Command::new(CMD), &[file], flags);
         assert_eq!(produced, expected)
