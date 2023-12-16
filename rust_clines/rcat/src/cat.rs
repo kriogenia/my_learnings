@@ -24,6 +24,12 @@ impl CommandClone<Args> for Cat {
         for filename in args.files.iter() {
             let buffer =
                 open(filename).map_err(|msg| format!("Failed to open {filename}: {msg}"))?;
+            for line in buffer.lines() {
+                println!(
+                    "{}",
+                    line.map_err(|err| format!("Error reading {filename}: {err}"))?
+                )
+            }
         }
         Ok(())
     }
