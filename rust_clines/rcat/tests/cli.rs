@@ -12,9 +12,10 @@ const MULTI_TXT: &str = "tests/inputs/multi_line.txt";
 fn no_args() {
     Command::cargo_bin(CMD)
         .unwrap()
+        .write_stdin("test")
         .assert()
-        .failure()
-        .stderr(predicate::str::contains("Usage"));
+        .success()
+        .stdout("test\n");
 }
 
 #[test]

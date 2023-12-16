@@ -1,19 +1,31 @@
 use std::{
     fs::File,
-    io::{BufRead, BufReader},
+    io::{self, BufRead, BufReader},
 };
 
 use clap::Parser;
 use common::{CommandClone, RunResult};
 
+const STDIN_ARG: &str = "-";
+
 #[derive(Debug, Parser)]
 #[command(author, version, about)]
 pub struct Args {
-    #[arg(required = true, help = "List of files to read")]
+    #[arg(default_value = STDIN_ARG, help = "List of files to read")]
     files: Vec<String>,
-    #[arg(default_value = "false", short = 'n', help = "Number lines")]
+    #[arg(
+        default_value = "false",
+        short = 'n',
+        long = "number",
+        help = "Number lines"
+    )]
     number_lines: bool,
-    #[arg(required = false, short = 'b', help = "Number non-empty lines")]
+    #[arg(
+        required = false,
+        short = 'b',
+        long = "number-nonblank",
+        help = "Number non-empty lines"
+    )]
     number_non_empty_lines: bool,
 }
 
@@ -49,6 +61,10 @@ impl CommandClone<Args> for Cat {
 }
 
 fn open(filename: &str) -> Result<Box<dyn BufRead>, String> {
+    if filename == STDIN_ARG {
+        return Ok(Box::new(BufReader::new(io::stdin())));
+    }
+
     match File::open(filename) {
         Ok(file) => Ok(Box::new(BufReader::new(file))),
         Err(error) => Err(format!("{}", error)),
