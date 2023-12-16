@@ -1,0 +1,4 @@
+Multiline file
+
+Contains more than one line.
+And one of them is empty.
