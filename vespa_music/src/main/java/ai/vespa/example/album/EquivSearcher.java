@@ -30,34 +30,31 @@ public class EquivSearcher extends Searcher {
 
     @Override
     public Result search(Query query, Execution execution) {
-        if (artistSpellings.isEmpty()) return execution.search(query);
+        if (artistSpellings.isEmpty()) {
+            return execution.search(query);
+        }
 
-        QueryTree tree = query.getModel().getQueryTree();
-        Item newRoot = equivize(tree.getRoot());
+        var tree = query.getModel().getQueryTree();
+        var newRoot = equivize(tree.getRoot());
         tree.setRoot(newRoot);
         query.trace("Equivizing", true, 2);
         return execution.search(query);
     }
 
     private Item equivize(Item item) {
-        if (item instanceof TermItem) {
-            String term  = ((TermItem)item).stringValue();
-            String index = ((TermItem)item).getIndexName();
-            if ("artist".equals(index)) {
-                List<String> synonyms = artistSpellings.get(term);
-                if (synonyms != null)
-                    return new EquivItem(item, synonyms);
+        if (item instanceof TermItem termItem) {
+            var term  = termItem.stringValue();
+            var index = termItem.getIndexName();
+            if ("artist".equals(index) && artistSpellings.containsKey(term)) {
+                return new EquivItem(item, artistSpellings.get(term));
             }
         }
-        else if (item instanceof PhraseItem) {
-            return item; // cannot put EQUIV inside PHRASE
+        else if (item instanceof CompositeItem compositeItem) {
+            for (var i = 0; i < compositeItem.getItemCount(); ++i)
+                compositeItem.setItem(i, equivize(compositeItem.getItem(i)));
+            return compositeItem;
         }
-        else if (item instanceof CompositeItem) {
-            CompositeItem composite = (CompositeItem)item;
-            for (int i = 0; i < composite.getItemCount(); ++i)
-                composite.setItem(i, equivize(composite.getItem(i)));
-            return composite;
-        }
+
         return item;
     }
 

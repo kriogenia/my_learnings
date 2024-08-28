@@ -15,13 +15,13 @@ import java.util.Objects;
  * and serving real HTTP requests for interactive debugging.
  * <p>
  * After running main you can e.g open
- * http://localhost:8080/search/?query=title:foo&tracelevel=2
+ * <a href="http://localhost:8080/search/?query=title:foo&tracelevel=2">...</a>
  * in a browser.
  */
 public class ApplicationMain {
 
     public static void main(String[] args) throws Exception {
-        try (Application app = Application.fromApplicationPackage(FileSystems.getDefault().getPath("src/main/application"),
+        try (var app = Application.fromApplicationPackage(FileSystems.getDefault().getPath("src/main/application"),
                                                                   Networking.enable)) {
             Objects.requireNonNull(app);
             Thread.sleep(Long.MAX_VALUE);

@@ -21,14 +21,14 @@ public class EquivSearcherTest {
 
     @Test
     void testMetallica() {
-        Chain<Searcher> myChain = new Chain<>(new MinimalQueryInserter(), new EquivSearcher());  // added to chain in this order
-        Execution.Context context = Execution.Context.createContextStub();
-        Execution execution = new Execution(myChain, context);
+        var myChain = new Chain<>(new MinimalQueryInserter(), new EquivSearcher());  // added to chain in this order
+        var context = Execution.Context.createContextStub();
+        var execution = new Execution(myChain, context);
 
-        for (String yql: queries) {
-            Query query = new Query("/search/?yql=" + encode(yql, StandardCharsets.UTF_8));
+        for (var yql: queries) {
+            var query = new Query("/search/?yql=" + encode(yql, StandardCharsets.UTF_8));
             query.getTrace().setLevel(6);
-            Result result = execution.search(query);
+            var result = execution.search(query);
             System.out.println(result.getContext(false).getTrace());
         }
     }

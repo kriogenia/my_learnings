@@ -18,12 +18,12 @@ public class SetFilterSearcherTest {
 
     @Test
     public void test_set_filter()   {
-        Chain<Searcher> myChain = new Chain<>(new MinimalQueryInserter(), new SetFilterSearcher());
-        Execution.Context context = Execution.Context.createContextStub();
-        Execution execution = new Execution(myChain, context);
-        String yql = encode("select * from sources * where artist contains \"metallica\"", StandardCharsets.UTF_8);
-        Query query = new Query("/search/?yql=" + yql + "&set-filter=2018,2017&set-filter-field-name=year");
-        Result result = execution.search(query);
+        var myChain = new Chain<>(new MinimalQueryInserter(), new SetFilterSearcher());
+        var context = Execution.Context.createContextStub();
+        var execution = new Execution(myChain, context);
+        var yql = encode("select * from sources * where artist contains \"metallica\"", StandardCharsets.UTF_8);
+        var query = new Query("/search/?yql=" + yql + "&set-filter=2018,2017&set-filter-field-name=year");
+        var result = execution.search(query);
         assertEquals("query \'AND artist:metallica |WEIGHTEDSET year{[1]:\"2018\",[1]:\"2017\"}\'",
                      result.getQuery().toString());
     }

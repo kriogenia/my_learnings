@@ -11,18 +11,20 @@ import com.yahoo.search.Result;
 import com.yahoo.search.Searcher;
 import com.yahoo.search.searchchain.Execution;
 
+import java.util.stream.Stream;
+
 /**
- * Searcher which accepts a input set filter which which bypass YQL parsing of large set
- * filters https://docs.vespa.ai/en/performance/feature-tuning.html#multi-lookup-set-filtering
- *
+ * Searcher that accepts an input set filter which bypass YQL parsing of large set
+ * filters <a href="https://docs.vespa.ai/en/performance/feature-tuning.html#multi-lookup-set-filtering">...</a>
+ * <p>
  * Example usage
- *
+ * <p>
  * /search/?yql=select * from music where userQuery()&
  * set-filter=2015,2016,2018&
  * set-filter-field-name=year&query=artist:metallica
- *
+ * <p>
  * The set filter is ANDed with the YQL parts of the query
- *
+ * <p>
  * Above example is turned into
  * select * from music where (artist contains "metallica") AND
  * ({"filter": true, "ranked": false}weightedSet(year, {"2015": 1, "2016": 1, "2018": 1}))
@@ -37,27 +39,36 @@ public class SetFilterSearcher extends Searcher {
 
     @Override
     public Result search(Query query, Execution execution) {
-        String fieldName = query.properties().getString(setFilterFieldName);
-        String values = query.properties().getString(setFilterValues);
-        if(fieldName == null || values == null) {
+        var fieldName = query.properties().getString(setFilterFieldName);
+        var values = query.properties().getString(setFilterValues);
+        if (fieldName == null || values == null) {
             return execution.search(query);
         }
-        String[] filters = values.split(",");
-        WeightedSetItem setItem = new WeightedSetItem(fieldName);
-        setItem.setFilter(true);
-        setItem.setRanked(false);
-        for(String f: filters) {
-            setItem.addToken(f);
-        }
-        Item queryRoot = query.getModel().getQueryTree().getRoot();
-        if (queryRoot instanceof AndItem) {
-            ((AndItem) queryRoot).addItem(setItem);
-        } else {
-            AndItem and = new AndItem();
-            and.addItem(queryRoot);
-            and.addItem(setItem);
-            query.getModel().getQueryTree().setRoot(and);
-        }
+
+        var setItem = buildWeightedSet(fieldName, values.split(","));
+        var queryRoot = queryRoot(query);
+        queryRoot.addItem(setItem);
         return execution.search(query);
     }
+
+    private AndItem queryRoot(Query query) {
+        var queryRoot = query.getModel().getQueryTree().getRoot();
+        if (queryRoot instanceof AndItem andQueryRoot) {
+            return andQueryRoot;
+        }
+
+        var and = new AndItem();
+        and.addItem(queryRoot);
+        query.getModel().getQueryTree().setRoot(and);
+        return and;
+    }
+
+    private WeightedSetItem buildWeightedSet(String name, String[] tokens) {
+        var setItem = new WeightedSetItem(name);
+        setItem.setFilter(true);
+        setItem.setRanked(false);
+        Stream.of(tokens).forEach(setItem::addToken);
+        return setItem;
+    }
+
 }

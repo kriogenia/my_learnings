@@ -19,8 +19,8 @@ import java.util.List;
 
 /**
  * A searcher which adds an OR-term to queries with Metal intent.
- *
- * See https://docs.vespa.ai/en/searcher-development.html
+ * <p>
+ * See <a href="https://docs.vespa.ai/en/searcher-development.html">...</a>
  */
 @After("MinimalQueryInserter")
 public class MetalSearcher extends Searcher {
@@ -31,14 +31,14 @@ public class MetalSearcher extends Searcher {
     /**
      * Annotating the constructor with @Inject tells the container to use this constructor
      * when building the searcher.
-     * 
+     *
      * <pre>MetalNamesConfig</pre> is automatically generated based on the
      * <pre>metal-names.def</pre> file found in resources/configdefinitions.
-     *
+     * <p>
      * See
-     *  - https://docs.vespa.ai/en/jdisc/injecting-components.html
-     *  - https://docs.vespa.ai/en/reference/config-files.html#config-definition-files
-     * 
+     *  - <a href="https://docs.vespa.ai/en/jdisc/injecting-components.html">...</a>
+     *  - <a href="https://docs.vespa.ai/en/reference/config-files.html#config-definition-files">...</a>
+     *
      * @param config the configuration object injected by the container.
      * @param metricReceiver endpoint for custom metrics
      */
@@ -63,11 +63,13 @@ public class MetalSearcher extends Searcher {
      */
     @Override
     public Result search(Query query, Execution execution) {
-        if ( ! isMetalQuery(query)) return execution.search(query);
+        if (!isMetalQuery(query)) {
+            return execution.search(query);
+        }
 
         metalQueriesMetric.add(1);
-        QueryTree tree = query.getModel().getQueryTree();
-        OrItem orItem = new OrItem();
+        var tree = query.getModel().getQueryTree();
+        var orItem = new OrItem();
         orItem.addItem(tree.getRoot());
         orItem.addItem(new WordItem("metal", "album"));
         tree.setRoot(orItem);
@@ -77,11 +79,9 @@ public class MetalSearcher extends Searcher {
     }
 
     private boolean isMetalQuery(Query query) {
-        for (IndexedItem posItem : QueryTree.getPositiveTerms(query.getModel().getQueryTree().getRoot())) {
-            if (metalWords.contains(posItem.getIndexedString()))
-                return true;
-        }
-        return false;
+        return QueryTree.getPositiveTerms(query.getModel().getQueryTree().getRoot()).stream()
+                .map(IndexedItem::getIndexedString)
+                .anyMatch(metalWords::contains);
     }
 
 }

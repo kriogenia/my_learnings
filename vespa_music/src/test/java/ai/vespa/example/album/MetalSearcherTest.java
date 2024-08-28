@@ -28,8 +28,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import static java.net.URLEncoder.encode;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -61,16 +60,16 @@ class MetalSearcherTest {
 
     @Test
     void testAddedOrTerm1() {
-        MetalNamesConfig.Builder builder = new MetalNamesConfig.Builder();
+        var builder = new MetalNamesConfig.Builder();
         builder.metalWords(Arrays.asList("hetfield", "metallica", "pantera"));
-        MetalNamesConfig config = new MetalNamesConfig(builder);
+        var config = new MetalNamesConfig(builder);
 
-        Chain<Searcher> myChain = new Chain<>(new MinimalQueryInserter(),  // added to chain in this order
+        var myChain = new Chain<>(new MinimalQueryInserter(),  // added to chain in this order
                 new MetalSearcher(config, new MetricReceiver.MockReceiver()));
-        Execution.Context context = Execution.Context.createContextStub();
-        Execution execution = new Execution(myChain, context);
+        var context = Execution.Context.createContextStub();
+        var execution = new Execution(myChain, context);
 
-        Result result = execution.search(metalQuery);
+        var result = execution.search(metalQuery);
         System.out.println(result.getContext(false).getTrace());
 
         assertAddedOrTerm(metalQuery.getModel().getQueryTree().getRoot());
@@ -78,11 +77,12 @@ class MetalSearcherTest {
 
     @Test
     void testAddedOrTerm2() {
-        try (Application app = Application.fromApplicationPackage(
+        try (var app = Application.fromApplicationPackage(
                 FileSystems.getDefault().getPath("src/main/application"),
-                Networking.disable)) {
-            Search search = app.getJDisc("default").search();
-            Result result = search.process(ComponentSpecification.fromString("metalchain"), metalQuery);
+                Networking.disable))
+        {
+            var search = app.getJDisc("default").search();
+            var result = search.process(ComponentSpecification.fromString("metalchain"), metalQuery);
             System.out.println(result.getContext(false).getTrace());
 
             assertAddedOrTerm(metalQuery.getModel().getQueryTree().getRoot());
@@ -91,21 +91,21 @@ class MetalSearcherTest {
 
     @Test
     void testWithMockBackendProducingHits() {
-        DocumentSourceSearcher docSource = new DocumentSourceSearcher();
-        Query testQuery = new Query();
+        var docSource = new DocumentSourceSearcher();
+        var testQuery = new Query();
         testQuery.getTrace().setLevel(6);
         testQuery.getModel().getQueryTree().setRoot(new WordItem("drum","album"));
 
-        Result mockResult = new Result(testQuery);
+        var mockResult = new Result(testQuery);
         mockResult.hits().add(new Hit("hit:1", 0.9));
         mockResult.hits().add(new Hit("hit:2", 0.8));
         docSource.addResult(testQuery, mockResult);
 
-        Chain<Searcher> myChain = new Chain<>(new MetalSearcher(), docSource);  // no config to MetalSearcher
-        Execution.Context context = Execution.Context.createContextStub();
-        Execution execution = new Execution(myChain, context);
+        var myChain = new Chain<>(new MetalSearcher(), docSource);  // no config to MetalSearcher
+        var context = Execution.Context.createContextStub();
+        var execution = new Execution(myChain, context);
 
-        Result result = execution.search(testQuery);
+        var result = execution.search(testQuery);
         System.out.println(result.getContext(false).getTrace());
 
         assertEquals(2, result.hits().size());
@@ -113,9 +113,9 @@ class MetalSearcherTest {
 
     private void assertAddedOrTerm(Item root) {
         // Assert that an OR term is added to the root, with album:metal as one of the or-terms:
-        assertTrue(root instanceof OrItem);
-        for (Iterator<Item> iter = ((CompositeItem)root).getItemIterator(); iter.hasNext(); ) {
-            Item item = iter.next();
+        assertInstanceOf(OrItem.class, root);
+        for (var iter = ((CompositeItem)root).getItemIterator(); iter.hasNext(); ) {
+            var item = iter.next();
             if (item instanceof WordItem) {
                 assertEquals("album:metal", item.toString());
             }
