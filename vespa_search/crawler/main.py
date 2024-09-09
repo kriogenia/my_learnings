@@ -15,6 +15,9 @@ def parse_args():
         "-t", "--token", help="Your TMDB API token", default=None, required=True
     )
     parser.add_argument(
+        "-n", "--number", type=int, help="Number of movies to fetch. Omit to fetch all.", default=-1, required=False
+    )
+    parser.add_argument(
         "-o",
         "--output",
         help="Path to output the document files",
@@ -52,14 +55,13 @@ def fetch_export():
         return gzip.decompress(res.content).decode()
 
 
-def fetch_ids(n=None):
+def fetch_ids(n: int):
     export = fetch_export()
-    is_limit_reached = lambda i: i == n if n else lambda _: False
+    is_limit_reached = lambda i: i == n if n >= 0 else lambda _: False
     ids = []
     for i, line in enumerate(export.splitlines()):
         if is_limit_reached(i):
             break
-        print(line)
         ids.append(line[20:].split(",", 1)[0])
     print(f"Fetched the IDs of {len(ids)} movies")
     return ids
@@ -76,5 +78,5 @@ def print_status():
 if __name__ == "__main__":
     args = parse_args()
     authenticate(args.token)
-    movie_ids = fetch_ids(5)
+    movie_ids = fetch_ids(args.number)
     threading._start_new_thread(print_status, ())
