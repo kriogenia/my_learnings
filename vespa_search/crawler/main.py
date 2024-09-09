@@ -1,4 +1,5 @@
 import argparse
+import atomics
 import gzip
 import requests
 import threading
@@ -15,7 +16,12 @@ def parse_args():
         "-t", "--token", help="Your TMDB API token", default=None, required=True
     )
     parser.add_argument(
-        "-n", "--number", type=int, help="Number of movies to fetch. Omit to fetch all.", default=-1, required=False
+        "-n",
+        "--number",
+        type=int,
+        help="Number of movies to fetch. Omit to fetch all.",
+        default=-1,
+        required=False,
     )
     parser.add_argument(
         "-o",
@@ -43,9 +49,6 @@ def authenticate(token: str):
     print("> Authentication successful")
 
 
-counter = 0
-
-
 def fetch_export():
     yesterday = date.today() - timedelta(days=1)
     export_date = yesterday.strftime("%m_%d_%Y")
@@ -68,11 +71,32 @@ def fetch_ids(n: int):
 
 
 def query_movie(movie_id: str, token: str):
-    response = request_tmdb(f"/movie/{movie_id}?language=en-US", token)	# todo: allow language selection?
+    response = request_tmdb(
+        f"/movie/{movie_id}?language=en-US", token
+    )  # todo: allow language selection?
     if response.status_code != 200:
         print(f"Failed to get the details of the movie [{movie_id}]")
         return
     return response.text
+
+
+counter = atomics.atomic(width=4, atype=atomics.INT)
+MIN_WAIT = 1.0 / 40.0  # max of forty request per second
+
+
+def throttle(previous: int):
+    ellapsed = time.time() - previous
+    if ellapsed < MIN_WAIT:
+        time.sleep(MIN_WAIT - ellapsed)
+    return time.time()
+
+
+def movie_fetcher(movie_ids: list[str], token):
+    last_request_instant = 0
+    for id in movie_ids:
+        last_request_instant = throttle(last_request_instant)
+        yield query_movie(id, token)
+        counter.inc()
 
 
 def print_status():
@@ -80,17 +104,13 @@ def print_status():
     while True:
         time.sleep(5)
         ellapsed = time.time() - start_time
-        print(f">> Requested: {counter} movies. Time ellapsed: {ellapsed:.0f} s")
+        print(f">> Requested: {counter.load()} movies. Time ellapsed: {ellapsed:.0f} s")
 
 
 if __name__ == "__main__":
     args = parse_args()
     authenticate(args.token)
     movie_ids = fetch_ids(args.number)
-    # todo: move to function
-    for movie_id in movie_ids:
-        movie = query_movie(movie_id, args.token)
-        print(movie)
-        # todo: add wait
-        counter += 1
     threading._start_new_thread(print_status, ())
+    for movie in movie_fetcher(movie_ids, args.token):
+        print(movie[:10])
