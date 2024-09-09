@@ -1,7 +1,9 @@
 import argparse
+import gzip
 import requests
 import threading
 import time
+from datetime import date, timedelta
 
 
 def parse_args():
@@ -11,6 +13,13 @@ def parse_args():
     )
     parser.add_argument(
         "-t", "--token", help="Your TMDB API token", default=None, required=True
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="Path to output the document files",
+        default=None,
+        required=False,
     )
     return parser.parse_args()
 
@@ -34,6 +43,28 @@ def authenticate(token: str):
 counter = 0
 
 
+def fetch_export():
+    yesterday = date.today() - timedelta(days=1)
+    export_date = yesterday.strftime("%m_%d_%Y")
+    with requests.get(
+        f"http://files.tmdb.org/p/exports/movie_ids_{export_date}.json.gz", stream=True
+    ) as res:
+        return gzip.decompress(res.content).decode()
+
+
+def fetch_ids(n=None):
+    export = fetch_export()
+    is_limit_reached = lambda i: i == n if n else lambda _: False
+    ids = []
+    for i, line in enumerate(export.splitlines()):
+        if is_limit_reached(i):
+            break
+        print(line)
+        ids.append(line[20:].split(",", 1)[0])
+    print(f"Fetched the IDs of {len(ids)} movies")
+    return ids
+
+
 def print_status():
     start_time = time.time()
     while True:
@@ -45,4 +76,5 @@ def print_status():
 if __name__ == "__main__":
     args = parse_args()
     authenticate(args.token)
+    movie_ids = fetch_ids(5)
     threading._start_new_thread(print_status, ())
