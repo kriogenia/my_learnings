@@ -16,8 +16,8 @@ def parse_args():
         "-t", "--token", help="Your TMDB API token", default=None, required=True
     )
     parser.add_argument(
-        "-n",
-        "--number",
+        "-l",
+        "--limit",
         type=int,
         help="Number of movies to fetch. Omit to fetch all.",
         default=-1,
@@ -27,9 +27,23 @@ def parse_args():
         "-o",
         "--output",
         help="Path to output the document files",
-        default=None,
+        default="../data",
         required=False,
     )
+    parser.add_argument(
+        "-n",
+        "--namespace",
+        help="Namespace of the generated documents",
+        default="mynamespace",
+        required=False
+	)
+    parser.add_argument(
+         "-d",
+         "--doctype",
+         help="Doctype of the generated documents",
+         default="movies",
+         required=False
+	)
     return parser.parse_args()
 
 
@@ -95,8 +109,14 @@ def movie_fetcher(movie_ids: list[str], token):
     last_request_instant = 0
     for id in movie_ids:
         last_request_instant = throttle(last_request_instant)
-        yield query_movie(id, token)
+        yield id, query_movie(id, token)
         counter.inc()
+        
+
+def save_movie(movie_id, movie, args):
+    id = f"id:{args.namespace}:{args.doctype}:{movie_id}"
+    print(id)
+        
 
 
 def print_status():
@@ -110,7 +130,7 @@ def print_status():
 if __name__ == "__main__":
     args = parse_args()
     authenticate(args.token)
-    movie_ids = fetch_ids(args.number)
+    movie_ids = fetch_ids(args.limit)
+    for movie_id, movie in movie_fetcher(movie_ids, args.token):
+        save_movie(movie_id, movie, args)
     threading._start_new_thread(print_status, ())
-    for movie in movie_fetcher(movie_ids, args.token):
-        print(movie[:10])
