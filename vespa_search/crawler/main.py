@@ -35,15 +35,15 @@ def parse_args():
         "--namespace",
         help="Namespace of the generated documents",
         default="mynamespace",
-        required=False
-	)
+        required=False,
+    )
     parser.add_argument(
-         "-d",
-         "--doctype",
-         help="Doctype of the generated documents",
-         default="movies",
-         required=False
-	)
+        "-d",
+        "--doctype",
+        help="Doctype of the generated documents",
+        default="movies",
+        required=False,
+    )
     return parser.parse_args()
 
 
@@ -111,12 +111,12 @@ def movie_fetcher(movie_ids: list[str], token):
         last_request_instant = throttle(last_request_instant)
         yield id, query_movie(id, token)
         counter.inc()
-        
+
 
 def save_movie(movie_id, movie, args):
     id = f"id:{args.namespace}:{args.doctype}:{movie_id}"
-    print(id)
-        
+    with open(f"{args.output}/{movie_id}.json", "w") as file:
+        file.write(f'{{"put":"{id}","fields":{movie}}}')
 
 
 def print_status():
@@ -124,13 +124,14 @@ def print_status():
     while True:
         time.sleep(5)
         ellapsed = time.time() - start_time
-        print(f">> Requested: {counter.load()} movies. Time ellapsed: {ellapsed:.0f} s")
+        print(f">> Created {counter.load()} movies. Time ellapsed: {ellapsed:.0f} s")
 
 
 if __name__ == "__main__":
     args = parse_args()
     authenticate(args.token)
     movie_ids = fetch_ids(args.limit)
+    threading._start_new_thread(print_status, ())
     for movie_id, movie in movie_fetcher(movie_ids, args.token):
         save_movie(movie_id, movie, args)
-    threading._start_new_thread(print_status, ())
+    print("> Completed")
