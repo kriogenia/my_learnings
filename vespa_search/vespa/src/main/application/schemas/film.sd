@@ -1,0 +1,94 @@
+schema film {
+
+    document film {
+
+        field adult type bool {}
+        field backdrop_path type string {}
+        field belongs_to_collection type map<string,string> {}
+
+        field budget type int {
+            indexing: summary | attribute
+        }
+
+        struct genre {
+            field id type int {}
+            field name type string {}
+        }
+
+        field genres type array<genre> { # could be flattened?
+            indexing: summary
+            struct-field name {
+                indexing: attribute
+                attribute: fast-search # check
+            }
+        }
+
+        field homepage type string {
+            indexing: summary
+        }
+
+        field id type int {}
+        field imdb_id type string {}
+        field origin_country type array<string> {}
+        field original_language type string {}
+        field original_title type string {}
+
+        field overview type string {
+            indexing: summary | index # tensor
+       }
+
+        field popularity type float {
+            indexing: summary | attribute
+            # check
+        }
+
+        field poster_path type string {}
+        field production_companies type array<map<string,string>> {}
+        field production_countries type array<map<string,string>> {}
+
+        field release_date type string {
+            indexing: summary
+        }
+
+        field revenue type int {}
+
+        field runtime type int {
+            indexing: summary | attribute
+        }
+
+        field spoken_languages type array<map<string,string>> {}
+
+        field status type string {
+            indexing: summary | attribute
+            attribute: fast-search
+        }
+
+        field tagline type string {
+            indexing: summary
+        }
+
+        field title type string {
+            indexing: summary | index
+        }
+
+        field video type bool {}
+
+        field vote_average type float {
+            indexing: summary | attribute
+        }
+
+        field vote_count type int {
+            indexing: summary | attribute
+        }
+
+    }
+
+    field release_date_timestamp type long {
+        indexing: input release_date | to_epoch_second | attribute
+    }
+
+    # fieldset title + description
+
+    # rank-rofile
+
+  }
