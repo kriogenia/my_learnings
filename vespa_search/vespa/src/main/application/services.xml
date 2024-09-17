@@ -44,7 +44,7 @@
          - Searchers: https://docs.vespa.ai/en/searcher-development.html
     -->
     <search>
-      <chain id="default" inherits="vespa">
+      <chain id="old_default" inherits="vespa">
         <searcher id="ai.vespa.example.album.SetFilterSearcher" bundle="album-recommendation-java"/>
       </chain>
       <chain id="metalchain" inherits="vespa">
@@ -84,6 +84,16 @@
     <min-redundancy>2</min-redundancy>
     <documents>
       <document type="music" mode="index" />
+    </documents>
+    <nodes>
+      <node hostalias="node1" distribution-key="0" />
+    </nodes>
+  </content>
+
+  <content id="film" version="1.0">
+    <min-redundancy>2</min-redundancy>
+    <documents>
+      <document type="film" mode="index" />
     </documents>
     <nodes>
       <node hostalias="node1" distribution-key="0" />

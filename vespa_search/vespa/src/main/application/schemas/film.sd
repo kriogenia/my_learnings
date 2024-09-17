@@ -83,9 +83,9 @@ schema film {
 
     }
 
-    field release_date_timestamp type long {
-        indexing: input release_date | to_epoch_second | attribute
-    }
+    #field release_date_timestamp type long {
+    #    indexing: input release_date | to_epoch_second | attribute
+    #} fix the epoch transformation not working
 
     # fieldset title + description
 
