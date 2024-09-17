@@ -1,5 +1,4 @@
 import argparse
-import atomics
 import gzip
 import requests
 import threading
@@ -41,7 +40,7 @@ def parse_args():
         "-d",
         "--doctype",
         help="Doctype of the generated documents",
-        default="movies",
+        default="film",
         required=False,
     )
     return parser.parse_args()
@@ -94,7 +93,8 @@ def query_movie(movie_id: str, token: str):
     return response.text
 
 
-counter = atomics.atomic(width=4, atype=atomics.INT)
+counter = 0
+lock = threading.Lock()
 MIN_WAIT = 1.0 / 40.0  # max of forty request per second
 
 
@@ -110,13 +110,14 @@ def movie_fetcher(movie_ids: list[str], token):
     for id in movie_ids:
         last_request_instant = throttle(last_request_instant)
         yield id, query_movie(id, token)
-        counter.inc()
+        with lock:
+            global counter; counter += 1
 
 
 def save_movie(movie_id, movie, args):
-    id = f"id:{args.namespace}:{args.doctype}:{movie_id}"
+    vespa_id = f"id:{args.namespace}:{args.doctype}::{movie_id}"
     with open(f"{args.output}/{movie_id}.json", "w") as file:
-        file.write(f'{{"put":"{id}","fields":{movie}}}')
+        file.write(f'{{"put":"{vespa_id}","fields":{movie}}}')
 
 
 def print_status():
@@ -124,7 +125,8 @@ def print_status():
     while True:
         time.sleep(5)
         ellapsed = time.time() - start_time
-        print(f">> Created {counter.load()} movies. Time ellapsed: {ellapsed:.0f} s")
+        with lock:
+        	print(f">> Created {counter} movies. Time ellapsed: {ellapsed:.0f} s")
 
 
 if __name__ == "__main__":

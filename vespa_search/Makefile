@@ -7,6 +7,6 @@ run:
 
 deploy:
 	@docker container inspect -f '{{.State.Status}}' ${container_name}
-	@$(MAKE) -C vespa deploy
+	@$(MAKE) -s -C vespa deploy
 
 .PHONY: run deploy
