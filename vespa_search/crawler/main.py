@@ -98,11 +98,11 @@ lock = threading.Lock()
 MIN_WAIT = 1.0 / 40.0  # max of forty request per second
 
 
-def throttle(previous: int):
+def throttle(previous: int) -> int:
     ellapsed = time.time() - previous
     if ellapsed < MIN_WAIT:
         time.sleep(MIN_WAIT - ellapsed)
-    return time.time()
+    return int(time.time())
 
 
 def movie_fetcher(movie_ids: list[str], token):
@@ -111,7 +111,8 @@ def movie_fetcher(movie_ids: list[str], token):
         last_request_instant = throttle(last_request_instant)
         yield id, query_movie(id, token)
         with lock:
-            global counter; counter += 1
+            global counter
+            counter += 1
 
 
 def save_movie(movie_id, movie, args):
@@ -126,14 +127,14 @@ def print_status():
         time.sleep(5)
         ellapsed = time.time() - start_time
         with lock:
-        	print(f">> Created {counter} movies. Time ellapsed: {ellapsed:.0f} s")
+            print(f">> Created {counter} movies. Time ellapsed: {ellapsed:.0f} s")
 
 
 if __name__ == "__main__":
     args = parse_args()
     authenticate(args.token)
     movie_ids = fetch_ids(args.limit)
-    threading._start_new_thread(print_status, ())
+    threading.Thread(target=print_status)
     for movie_id, movie in movie_fetcher(movie_ids, args.token):
         save_movie(movie_id, movie, args)
     print("> Completed")
