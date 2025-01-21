@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Soto Estévez"
+  given-names: "Ricardo"
+  orcid: "https://orcid.org/0009-0007-2596-9976"
+title: "Practical study of basic Genetic Algorithm over the p-Hub Median Problem"
+version: 1.0.0
+date-released: 2024-11-24
+url: "https://github.com/kriogenia/ga_phub"

@@ -1,0 +1,53 @@
+\section{Introduction}
+
+The hub location problem was first introduced by O'Kelly (1987)\cite{OKelly1987}. It stems from real world
+industries, like postal deliveries or passenger transports, where different places are nodes in an
+interconnected graph and all possible transits should be optimized defining some of them as hubs. These
+centrals hubs would serve as switching points for flows between the nodes, optimizing the edges connecting
+two hubs. Each node would be assigned to a hub and the transit from a node $i$ to a node $j$
+would be routed first to the hub assigned to $i$ ($k$) and then to $j$ via its own assigned hub,
+$l$. This structure creates a network where the positioning of hubs significantly impacts transportation
+costs. The hub location model seeks to minimize these costs by choosing optimal hub placements.
+
+The first approach proposed by O'Kelly (1987)\cite{OKelly1987} was a quadratic integer program with a
+non-convex objective function, what easily points this as a NP-hard problem with high computation costs
+and a general magnitude of $O(n^{4})$. This sparkled several articles in the literature
+with new approaches and variants to this problem, see: Campbell (1996)\cite{Campbell1996}, O'Kelly (1992)
+\cite{OKelly1992} and Aykin (1994)\cite{Aykin1994}.
+
+From this subsequent articles on the matter, we are the most interested in those of A.T. Ernst \&
+M. Krishnamoorthy\cite{Ernst1996}\cite{Ernst1998}\cite{Ernst1999}. In these papers the authors expand
+the problem defining three different costs for each type of connection (spoke-to-hub, hub-to-hub and
+hub-to-spoke) instead of the uniform cost or the alpha reduction that was used in the previous
+enunciates. On this research we'll tackle the problem specified in "\emph{Efficient algorithms for
+the uncapacitated single allocation $p$-hub median problem}"\cite{Ernst1996} version, but the three
+papers work over the same dataset with different restrictions.
+
+These papers study the uncapacitated single allocation $p$-hub median problem (from now on
+\code{USApHMP}). The scenario of this problem is a complete graph $G=(N,E)$ where $N={1, ..., n}$ is
+the set of nodes and $E = N x N$ is the set of edges connecting every node with the rest.
+The volume of traffic between two nodes $i$ and $j$ is given in the flows matrix $W$, being $W_{ij}$ 
+the flow demand from $i$ to $j$ (in this variant of the problem this is not necessarily symmetrical).
+
+This problem is \emph{uncapacitated} as the hubs are assumed to be able to handle an unlimited
+capacity of transfers. It's \emph{single} as each node can only have one assigned hub. And
+it's a $p$-hub problem as $p$ is the fixed numbers of hubs that must be emplaced. To see a version
+with a variable $p$ or capacitated hubs, please consult \cite{Ernst1999}. For a version
+allowing multiple allocations, refer to \cite{Ernst1998}.
+
+The main difference of this variant with previous literatures is the presence of three separate
+costs associated with each flow $W_{ij}$. The \emph{collection} ($\chi$) cost is associated to the allocation
+of the transfered item from the origin node to its assigned hub; the \emph{transfer} ($\alpha$) cost is
+applied to the movement between hubs; and the \emph{distribution} ($\delta$) refers to the remaining step,
+from the last hub to the terminal location. Each one of this is proportional to the distance between
+the connected nodes.
+
+These three papers of Ernst and Krishnamoorthy use a dataset from the \emph{Australia Post} with 200
+nodes and the respective $200x200$ flows matrix. A C program was attached to the dataset to reduce
+it into smaller problems given a certain N and P. The optimal solutions for every combination of
+$N = \{10, 20, 30, 40, 50\}$ and $P = \{2, 3, 4, 5\}$ were also provided. In this paper we'll
+be working with this dataset and these smaller problems.
+
+Following this introduction we'll see the mathematical formulation for our fitness function, then
+we'll see the implementations of the different genetic operators, and after a review of the
+computational results we'll extract some conclusiones on this research.

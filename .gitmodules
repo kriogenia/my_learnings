@@ -1,3 +1,0 @@
-[submodule "rpm"]
-	path = artificial_intelligence/rpm
-	url = git@github.com:kriogenia/ai_master_rpm

@@ -1,0 +1,142 @@
+\section{Genetic Algorithm}
+
+Our implementation follows the basic schema of every GA\cite{Thede2004}. Creation and evaluation of an initial
+population ($p$), and improvement of that population until a termination condition is met. The population
+refinement  is done via a \emph{selection} of two or more parents, generation of new childs from the
+\emph{crossover} of these parents, application of a \emph{mutation} to diversify the population and a
+evaluation of the childs to select and \emph{refine} the new population that will be used in the next
+iteration of the loop.
+
+In order to improve the performance of the algorithm some domain-specific components were implemented,
+mainly in the \nameref{ss:crossover} (\ref{ss:crossover}) and \nameref{ss:mutation} (\ref{ss:mutation})
+steps. This section will offer a brief description of the implementation of every facet of the GA.
+
+\subsection{Chromosome encoding\label{ss:chromosome}}
+
+The chromosome encoding that we used in our individuals is an array $S$ of size $n$ where each index would
+point to the randomly assigned hub of each node. On top of that, these individuals are built with the
+necessary contracts to ensure that they always contain $p$ unique values stored in the chromosome, that
+way we are ensuring that every chromosome is a valid solution with $p$ hubs.
+
+\begin{equation}
+  S = [1, 1, 5, 1, 5, 5, 9, 1, 5, 9 ],\quad p = 3 \label{eq:chromosome_example}
+\end{equation}
+
+An example of this chromosome to a problem of size $n = 10$ and $p = 3$ is the one shown at (\ref{eq:chromosome_example}).
+In this example the node 1 is assigned to itself as indicated by $S_{1}=1$, the node 2 is allocated also
+to node 1, the node 3 to another hub placed in 5 and so on. See also that $U(S)=\{1,5,9\}$ fullfilling
+the $|U(S)|=3$ requirement to have $p=3$ hubs.
+
+The generation of the initial population of individuals is random, selecting three different values from
+${1,\dots,n}$ and randomly assigning them to the different hubs. To ensure that all three have at least
+one assigned hub, these first random chromosome will always allocate each hub to itself (\ref{eq:autoalloc}).
+
+\begin{equation}
+  S_{i}=i, \forall i \in U(S) \label{eq:autoalloc}
+\end{equation}
+
+\subsection{Selection}
+
+In the selection step the strategy used is the \emph{Binary Tournament}. We pick two random individuals from
+the population and select the one with the higher fitness. In case of equal fitness the first candidate
+gets the priority. Both random individuals can be the same, in that case, that individual is ensured to
+be picked for the crossover step.
+
+This is done twice to select a total of two parents.  Both selected parents can also be the same individual,
+in that case the child generated will be a clone of the parent, but can still provide a better solution with
+the mutation.
+
+\subsection{Crossover\label{ss:crossover}}
+
+The crossover applied in the algorithm is based on the \emph{Single Point Crossover} strategy, but adding
+two possible modifications to ensure the validity of the solutions, as the merged chromosome can
+have between $1$ and $2p$ nodes, as it is shown in (\ref{eq:bad_chromosome}) with two parents and a
+cutting point that can generate two invalid chromosomes, the first one with a number of hubs below
+$p$ and the second one with almost twice the value of $p$.
+
+\begin{equation}
+  \label{eq:bad_chromosome}
+  [1,1,1,1,2,3] x [5,1,5,4,1,1] \xRightarrow{x=4} [1,1,1,1,1,1], [5,1,5,4,2,3]
+\end{equation}
+
+This single point version generates a cutting point $x \in \{1,\dots,n\}$, creates a new child, and
+then replicates the hub of every node $i$ from the left parent while $i<=x$ and the right
+parent for every $x<i<=n$. If $x=n$ then the child will be an exact replica of the left parent.
+
+Then it evaluates the resulting child looking at its number of hubs. If it's exactly $p$ the child
+is deemed valid and returned. If it's below $p$, new hubs are generated until $p$ is satisfied, reallocating
+each of these nodes converted to hubs to themselves. If it's above $p$, random hubs are selected and
+removed until the child matches $p$, every orphaned node from this purge is rellocated to one of the
+remaining nodes. See the algorithm \ref{alg:crossover} for the full breakdown.
+
+\begin{algorithm}[H]
+  \caption{Crossover}
+  \label{alg:crossover}
+  \begin{algorithmic}[1]
+    \Require{$L$ (left parent)}
+    \Require{$R$ (right parent)}
+    \Require{$p$}
+    \Ensure{valid child}
+    \Function{RemoveHub}{$S,p$}
+      \While{$length(S.hubs)>p$}
+        \State $x \gets randomNode(S)$
+        \State $y \gets randomNode(S - nodeToRemove)$
+        \For{$n$ in $0, length(S)$}
+          \If {$S_{n} = x$}
+            \State $S_{n} \gets y$
+          \EndIf
+        \EndFor
+      \EndWhile
+    \EndFunction
+    \item[]
+    \Function{AddHub}{$S,p$}
+      \While{$length(S.hubs)<p$}
+        \State $x \gets randomNode(S - S.hubs)$
+        \State $S_{x} \gets x$
+      \EndWhile
+    \EndFunction
+  \item[]
+  \State $x \gets randomPoint(N)$
+  \State $C \gets L.replica()$
+  \For{$i$ in ($x$, $length(child)$)}
+    \State $C_{i} \gets R_{i}$
+  \EndFor
+  \If{$length(C.hubs) > p$}
+    $RemoveHub(C,p)$
+  \ElsIf{$length(C.hubs) < p$}
+    $AddHub(C,p)$
+  \EndIf
+  \State \Return C
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Mutation\label{ss:mutation}}
+
+The mutation applied to the chromosome is the a hub reassignment. A random non-hub node is
+picked and transformed into a hub. Every sibling node assigned to the same hub is reallocated
+to this new hub, including the previous hub (see Alg. \ref{alg:mutation}).
+The probability to perform this mutation can be specified before running the algorithm,
+and different values ($\{0.05., 0.1, 0.25, 0.5\}$) were tested in the following section 
+(\ref{s:computational_results}) to find which probability performed the best.
+
+\begin{algorithm}[H]
+  \caption{Mutation}
+  \label{alg:mutation}
+  \begin{algorithmic}[1]
+    \Require{$S$ (chromosome)}
+    \State $h \gets randomNode(S - S.hubs)$
+    \For{$n$ in $0, length(S)$}
+    \If {$S_{n} = S_{h}$}
+        \State $S_{n} \gets h$
+      \EndIf
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Replacement}
+
+To perform the replacement that generates the population of the next interaction a simple
+elitist approach was followed. Adding the new child to the current population in the place
+of the current worst individual if it has a better fitness.
+
+

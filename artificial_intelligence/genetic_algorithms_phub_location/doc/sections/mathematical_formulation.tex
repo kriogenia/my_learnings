@@ -1,0 +1,74 @@
+\section{Mathematical formulation}
+
+The problem \code{USApHMP-Q} is the quadratic linear algorithm of O'Kelly (1997)\cite{OKelly1987}
+reformulated by Ernst \& Krishnamoorthy (1996)\cite{Ernst1996} to accomodate the new costs
+introduced on their problem. Let $Z$ be a matrix $nxn$ indicating which nodes of $N$ are allocated
+to which hubs. The total cost of a certain allocation $Z$ is the sum of the delivery cost every
+path $i,j$, being the delivery cost of a path the product of the flow between the nodes and the 
+sum of each step of the delivery.
+
+\hfill
+
+\textbf{Notation:}
+
+$W_{ij}$: flow between the nodes $i$ and $j$
+
+$d_{ij}$: euclidean distance between the nodes $i$ and $j$
+
+$\chi$: collection cost
+
+$\alpha$: hub-to-hub transport cost
+
+$\delta$: distribution cost
+\[
+Z_{ij} = \begin{cases}
+  1 & \text{if } i \text{ is assigned to hub } j, \forall i = 1,\dots,n, \forall j = 1,\dots,n \\
+  0 & \text{otherwise, }\forall i = 1,\dots,n, \forall j = 1,\dots,n \\
+\end{cases}
+\]
+
+\subsection{Problem \code{USAp-HMP-Q}}
+
+\[
+  \text{Min.} \quad \sum_{i\in N}\sum_{j\in N}\sum_{k\in N}\sum_{l\in N} W_{ij}(\chi d_{ik} Z_{ik} + \alpha d_{kl} Z_{ik} Z_{jl} + \delta d_{jl} Z_{jl})
+\]
+
+\begin{alignat}{3}
+  \text{S.t.} \quad & \sum_{k \in N} & \quad Z_{kk} &= p         & \label{p_hubs}\\
+                    & \sum_{k \in N} & \quad Z_{kk} &= 1         & \quad & \forall i \in N \label{eq:single_alloc} \\
+                    &                & \quad Z_{ik} &\le Z_{kk}  & \quad & \forall i, k \in N \label{eq:only_hubs} \\
+                    &                & \quad Z_{ik} &\in \{0,1\} & \quad & \forall i, k \in N \label{eq:prev_alloc}
+\end{alignat}
+
+In this problem \eqref{p_hubs} sets the $p$-hub part of the problem ensuring that there's
+only $p$ hubs. \eqref{eq:single_alloc} ensures the single allocation as  each column of
+$Z$ can only sum 1. \eqref{eq:only_hubs} prevents allocations to non-hub nodes. And
+\eqref{eq:prev_alloc} asserts that hub nodes are not allocated to other nodes.
+
+Aside from this formulation, Ernst \& Krishnamoorthy present two other versions in the
+same paper\cite{Ernst1996}. To see other formulations around the same or similar problems
+refer to the survey conducted by Farahani (2013)\cite{Farahani2013}.
+
+\subsection{Fitness function}
+
+The fitness function used in this project uses the \code{USAp-HMP-Q} function as its basis.
+In order to transform it into a maximization function it's negated. As we'll be using as a
+chromosome a valid and complete solution (see \ref{ss:chromosome}) 
+where each node is already allocated to one of $p$ nodes the equation can be greatly simplified
+as there's no need for the two summatories over $k$ and $l$ to find the allocated nodes of $i$
+and $j$. Letting $S_{i} \in \{1,\dots,n\} \forall i$ be an array of size $n$ where $S_{i}$
+is the assigned hub of $i$, the fitness function to maximize is:
+
+\[
+  \text{Max.} \quad 1 - \sum_{i \in n} \sum_{j \in n} W_{ij} (\chi d_{iS_{i}} + \alpha d_{S_{i}S_{j}} + \delta d_{jS_{j}})
+\]
+
+\begin{alignat}{3}
+  \text{S.t.} \quad & |S| = n \\
+                    & S_{i} \in \{1,\dots,n\}, \forall i \in \{1,\dots,n\} \\
+   & |U(S)| = p \label{eq:ensure_p}
+\end{alignat}
+
+In this case aside from the possible values or the length or $S$ the only requirement
+the function must subject to is that the total of uniques values of $S$ is $p$
+as it's enforced with Equation (\ref{eq:ensure_p}).

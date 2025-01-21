@@ -1,0 +1,47 @@
+\documentclass[onecolumn]{IEEEtran}
+
+\usepackage{algorithm,algpseudocode}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{authblk}
+\usepackage{caption}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}
+\usepackage{nameref}
+\usepackage{graphicx}
+% \graphicspath{ {images/} }
+
+% metadata
+\author{Ricardo Soto Estévez}
+\affil{Menendez Pelayo International University}
+\date{\today}
+\title{Practical study of basic Genetic Algorithm over the p-Hub Median Problem}
+
+% custom macros
+\def\code#1{\texttt{#1}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract} \noindent {
+This article addresses the single allocation $p$-hub median problem by applying a genetic algorithm (GA)
+to optimize hub placements. It details the fitness function for evaluating candidate solutions and describes
+the genetic operators used to generate new solutions. Performance benchmarks across various problem sizes
+are presented to compare implementations and identify the most effective configurations.
+} \end{abstract}
+
+\begin{IEEEkeywords}
+Hub location, genetic algorithms, heuristic solution, metaheuristics, analysis 
+\end{IEEEkeywords}
+
+\input{sections/introduction.tex}
+\input{sections/mathematical_formulation.tex}
+\input{sections/genetic_algorithm.tex}
+\input{sections/computational_results.tex}
+\input{sections/conclusion.tex}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

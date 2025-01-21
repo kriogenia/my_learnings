@@ -1,0 +1,80 @@
+\section{Computational results\label{s:computational_results}}
+
+The GA was evaluated in two different analysis. The first one (\ref{ss:benchmark_evaluations})
+focused on finding the best solution on a given number of evaluations to see what mutation probability
+gives better results; while the second one, \ref{ss:benchmark_optimal}, executed the GA searching for
+the optimal solution and evaluates the parameters used in the successful executions.
+
+Every subproblem with each parameter like \emph{mutation} and \emph{population} was executed 30 times and
+averaged to ensure stability results. A different seed was used for each of these 30 executions
+but every iteration use the same thrity seeds for them. The hardware used in the benchmarks was a CPU
+\emph{Intel i5-8600 x6 @3.6GHz} with \emph{16GB} of RAM DDR4.
+
+\subsection{Performance in a fixed number of evaluations\label{ss:benchmark_evaluations}}
+
+In this analysis, the algorithm was executed with a fixed number of maximum evaluations ($100000$)
+for each $(n,p)$ problem and \emph{mutation probability} combination. The population for each
+problem was set to $n+1$. The fitness of the best solution, the gap between this fitness and the best
+solution, and the consumed time was recorded for each of this executions.
+
+The aim of this benchmark is to showcase the overall results for the different mutation probabilities.
+This way we can discern the best value or range to specify in the GA when it's executed in a restricted
+timeframe and the optimal is not required.  Table \ref{tb:evals_benchmark}
+contains the data for the solutions up until $n=40$. The data containing the solutions for size $50$
+can be found in the \code{data/benchmark\_evals\_2024-11-14T09-27.csv} file at the repository\cite{SotoEstevezGA2024}.
+
+\input{tables/benchmark_evaluations.tex}
+
+From this data two aggregations were conducted to analyze the behavior of \emph{mutation} for each
+different problem size. The two aggregations were groupings by $(p,mutation)$ and $(n,mutation)$.
+The Figure \ref{fig:mutation_vs_gap}
+shows a comparison between $n$ and $p$ against the resulting mean $gap$ with the four different mutations.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/mutation_vs_gap.png}
+  \caption{p vs. Gap and n vs. Gap based on the mutation probability}
+  \label{fig:mutation_vs_gap}
+\end{figure}
+
+From this result we can see that overall the highest mutation probability ($0.5$) gets the results
+closer to the optimal solution, except on the problems were either $n$ or $p$ are minimal. In these
+cases the minimum mutation ($0.05$) comes on top for $n=10$ and all the mutation values get almost
+the same gap for $p=2$. Outside of these minimal problems were the set of solutions is not big
+enough to get an advantage from a diverse population, the lower mutation probability performs
+significantly worse, specially as $n$ and $p$ increases.
+
+\subsection{Performance searching the optimal solution\label{ss:benchmark_optimal}}
+
+During this benchmark the algorithm was executed until the solution given by the examples
+was matched. In order to attempt this multiple times with different parameters the benchmark attempts
+to find the optimal solution with different combinations that will scale down in mutability and scale up
+in evaluations and population, in this order.
+
+This way the benchmark will broad the parameters of the execution in order to attempt to find the solution
+if the previous combination didn't work. First, it attempts it lowering the mutation probability (using $0.5$,
+$0.25$ and $0.1$ as possible values), then it attempts to allow a bigger number of maximum evaluations
+($4096$, $16384$, $65536$, $262144$ and $1048576$) and finally using a bigger population ($10$, $20$, $25$,
+$40$, $50$, $75$, $100$). Each advance in the number of evaluations resets the mutation to the first one,
+and the same occurs when sizing up the population.
+
+The executions that succeeded in finding the optimal can be seen in the Table \ref{tb:optimal_benchmark}.
+The table shows the \emph{mutation} and \emph{population} used in the first optimal finding for that subproblem,
+and it also records the number of \emph{evaluations} and the \emph{time} required in the successful 
+execution, in addition to the \emph{total time} required adding the execution time of the previous attempts.
+Every missing subproblem, like all those for sizes $40$ and $50$ aside of those with $p=2$, where not
+resolved with the optimal solution in any of the $105$ different attempts.
+
+\input{tables/benchmark_optimal.tex}
+
+One of they key findings from this analysis was that only two of the subproblems resolved benefited from
+the increment of evaluations over $65536$, with the $(20,5)$ barely using a couple thousand more evaluations.
+This means that the current evaluation usually fails as it converges into a population no diverse enough
+that fails to get closer to the optimal solution and the extra evaluations won't solve it.
+
+A good solution for this could have been using a bigger population, specially as the problems with a
+bigger $n$ will also have a lot more possible solutions. Relating the population to $n$ was followed in \ref{ss:benchmark_evaluations}.
+In this case the scaling would end up reaching that value, and more, if required; but as we see only one
+problem, $(20,3)$, scalated until $n=population$, with another one, the $(20,5)$, going above $n$. This
+could be pointing the sweet post for $population$ below $n$,
+

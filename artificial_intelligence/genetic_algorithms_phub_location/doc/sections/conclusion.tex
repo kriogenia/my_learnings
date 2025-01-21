@@ -1,0 +1,24 @@
+\section{Conclusion}
+
+The motivation of this research was offering an approach to the $p$-hub problem using GA. Implementing the 
+\code{USApHMP-Q} function as the basis of the fitness function and with tailored \emph{crossover} and \emph{mutation}.
+
+In overall terms the implemented algorithm fulfilled its objective as heuristic. With an execution below
+the single second, the algorithm can generate a solution with a median gap of just $2.255\%$ over the best 
+solution; ranging from half a dozen of optimal solutions found and maximum $9.619\%$ gap. With our analysis
+we found the mutation probability of $0.5$ being the best performant of those tested (with a deeper analysis
+we could find a better candidate in its vicinity), using that value the solution would rise to a $2.066\%$
+median gap and a $8.628\%$ maximum gap.
+
+Regarding the fit of these implementation to find the optimal solution the algorithm lacks quite a bit.
+The GA accomplishes good results for the easiest subproblems, but fails to find the solution with the upper
+set of subproblems. The cause of this is a set of possible solutions that outgrowns the capabilities of the
+implementation. Several enchancements could be added to improve the GA in this aspect, like implementing a
+selection phase evaluating more candidates, a new mutation creating more variance or a replacement that could
+keep some sub-optimal but highly different solutions that could open up new paths during the crossover step.
+
+All in all, these improvements could not be enough to close the gap enough with other approaches used in the
+literature with this problem. This limitation is closely related with the foundations of the genetic algorithms
+and would end up being a stone in the road sooner or later.
+
+
