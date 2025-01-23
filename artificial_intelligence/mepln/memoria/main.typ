@@ -1,5 +1,9 @@
 #import "@preview/charged-ieee:0.1.3": ieee
 
+#set text(
+  lang: "es"
+)
+
 #show: ieee.with(
   title: [PRÁCTICA 1: Entrenamiento y Evaluación de PoS Taggers y Parsers],
   abstract: [ 
@@ -21,28 +25,33 @@
 
 = Ejercicio 1. Entrenamiento y etiquetación con PoS Tagggers
 
-== 1.a. Con modelos pre-entrenados
+== Con modelos pre-entrenados
 
-#lorem(240)
+=== Inglés
 
-= Introduction
-Scientific writing is a crucial part of the research process, allowing researchers to share their findings with the wider scientific community. However, the process of typesetting scientific documents can often be a frustrating and time-consuming affair, particularly when using outdated tools such as LaTeX. Despite being over 30 years old, it remains a popular choice for scientific writing due to its power and flexibility. However, it also comes with a steep learning curve, complex syntax, and long compile times, leading to frustration and despair for many researchers @netwok2020 @netwok2022.
+El primer idioma a tratar en este ejercicio es el inglés. El etiquetador elegido fue #lorem(24)
 
-== Paper overview
-In this paper we introduce Typst, a new typesetting system designed to streamline the scientific writing process and provide researchers with a fast, efficient, and easy-to-use alternative to existing systems. Our goal is to shake up the status quo and offer researchers a better way to approach scientific writing.
+=== Lengua romance
 
-By leveraging advanced algorithms and a user-friendly interface, Typst offers several advantages over existing typesetting systems, including faster document creation, simplified syntax, and increased ease-of-use.
+Para la segunda lengua se seleccionó el gallego y se eligió el etiquetador _CitiusTagger_#footnote[Disponible para descarga en: http://gramatica.usc.es/pln/tools/CitiusTools.html], desarrollado por el grupo ProLNat\@GE de la Universidad de Santiago de Compostela y presentado en 2014 en la revista de la Sociedad Española para el Procesamiento del Lenguaje Natural@Gamallo2014.
 
-To demonstrate the potential of Typst, we conducted a series of experiments comparing it to other popular typesetting systems, including LaTeX. Our findings suggest that Typst offers several benefits for scientific writing, particularly for novice users who may struggle with the complexities of LaTeX. Additionally, we demonstrate that Typst offers advanced features for experienced users, allowing for greater customization and flexibility in document creation.
+Este desambiguador morfosintático fue entrenado en gallego con un corpus de $237000$ tokens formado por textos periodísticos y académicos; y emplea un lexicon con más de $428000$ lexemas. Es un clasificador de bigramas bayesiano con contexto. La desambiguación de tokens no evidentes la lleva a cabo por medio de la selección de la etiqueta más probable teniendo en cuenta la probabilidad asociada a las etiquetas anterior y posterior, así como la probabilidad de la copresencia del token con cada una de estas dos etiquetas inmediatamente próximas. Su funcionamiento es similar al formalismo de los modelos ocultos de Markov (HMM)@Brants2000, pero con desambiguación token a token en vez de usando el algoritmo Viterbi.
 
-Overall, we believe that Typst represents a significant step forward in the field of scientific writing and typesetting, providing researchers with a valuable tool to streamline their workflow and focus on what really matters: their research. In the following sections, we will introduce Typst in more detail and provide evidence for its superiority over other typesetting systems in a variety of scenarios.
+El texto seleccionado fue el artículo de Galicia@wiki:Galicia de la Wikipedia en gallego. Puesto que el texto se encuentra en versión web no es apto para ser analizado directamente con el etiquetador, por lo que se utilizó la TextExtracts API#footnote[Disponible en: https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts] de Wikimedia para obtener una versión con el texto plano#footnote[Petición empleada: https://gl.wikipedia.org/w/api.php?action=query&prop=extracts&exlimit=1&titles=Galicia&explaintext=1&formatversion=2&format=json]. Por medio de sustituciones de expresiones regulares también se eliminó el marcado de las secciones y se comprimieron múltiples líneas vacías. El texto resultante cuenta con $10462$ palabras.
+
+La salida generada por _CitiusTagger_ usa el tagset para el gallego de FreeLing#footnote[Disponible para consulta en: https://freeling-user-manual.readthedocs.io/en/latest/tagsets/tagset-gl/], que a su vez se basa en EAGLES. No se ha contado con una versión del texto anotada por lo que el análisis de la salida fue realizado manualmente.
+
+Un primer error visualizado ya al comienzo es la etiquetación de _"xurídica"_ como un adjetivo, esto no es correcto puesto al ir seguido de _"e lexislativamente"_ estamos ante un caso de _elisión verbal_, por lo que _"xurídica"_ actúa como adverbio aunque sea un adjetivo morfológicamente. Sabiendo que el modelo resuelve los tokens de izquierda a derecha, y que además no evalúa contexto a dos palabras de distancia, es fácil ver la carencia que ha provocado este error.
+
+Otro resultado a analizar es la etiquetación de _/km²_ (extraído de _"hab./km²"_). En una de sus apariciones (línea 443) es categorizado como un adjetivo cualificativo, mientras que en la inmediatamente siguiente (línea 458) es categorizado como un sustantivo común. El contexto previo a ambos es el mismo, sin embargo, la presencia de una preposición a continuación, en vez de una conjunción, ha permitido al modelo desambiguarlo más correctamente.
+
+Más allá de todo esto el resultado contiene un altísimo índice de acierto, incluso a la hora de etiquetar las contracciones tan comunes en el gallego.
 
 = Methods <sec:methods>
 #lorem(45)
 
 $ a + b = gamma $ <eq:gamma>
 
-#lorem(80)
 
 #figure(
   placement: none,
@@ -81,6 +90,3 @@ In @fig:sun you can see a common representation of the Sun, which is a star that
 In @tab:planets, you see the planets of the solar system and their average distance from the Sun.
 The distances were calculated with @eq:gamma that we presented in @sec:methods.
 
-#lorem(240)
-
-#lorem(240)
