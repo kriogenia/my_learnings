@@ -8,7 +8,7 @@
   title: [PRÁCTICA 1: Entrenamiento y Evaluación de PoS Taggers y Parsers],
   abstract: [ 
     Memoria de la Práctica 1 de la asignatura Métodos Empíricos de Procesamiento del Lenguaje Natural del Máster de Investigación en Inteligencia Artificial de la Universidad Internacional Menéndez Pelayo.
-    Curso 2024/25. Cubre los ejercicios: 1.a, TODO
+    Curso 2024/25. Cubre el apartado Entregable del Ejercicio 1. TODO
   ],
   authors: (
     (
@@ -29,7 +29,13 @@
 
 === Inglés
 
-El primer idioma a tratar en este ejercicio es el inglés. El etiquetador elegido fue #lorem(24)
+El primer idioma a tratar en este ejercicio es el inglés. El etiquetador elegido fue el _Illinois Part of Speech Tagger_@RothZe98@Even-ZoharRo01, en su versión 2.0.2 obtenido desde la página web oficial#footnote[https://cogcomp.seas.upenn.edu/page/download_view/POS].
+
+El _Illinois PoS Tagger_ usa una arquitectura _SNOW_ (Sparse Network of Linear Separators) con el algoritmo de aprendizaje Winnow, lo que lo convierte en un etiquetador basado en redes neuronales. Sus nodos de entrada se corresponden con nueve características basadas en la palabra a computar, sus dos palabras anteriores y las dos posteriores. En su salida produce la etiqueta, que es inmediatamente aplicada a la palabra, por lo que las palabras subsiguientes dependerán en la etiquetación de las anteriores.
+
+El libro _The Advancement of Learning_ de Francis Bacon fue seleccionado para la ejecución del tagger. Se descargó su versión de texto plano de _Project Gutenberg_#footnote[https://www.gutenberg.org/ebooks/5500] y el único preprocesamiento realizado fue la eliminación del prefacio y el posfacio includos por _Project Gutenberg_ con la metadata y la licencia de uso. El conteo de palabras total del texto resultante fue de $83821$.
+
+Tras la ejecución del etiquetador se obtuvo una salida con la misma estructura del texto introducido, con la diferencia de que cada token reconocido por el tagger se convierte en una tupla delimitada entre paréntesis. En esta tupla el primer elemento de la misma es la etiqueta generada; y el segundo, separado por un espacio, el token procesado. La página ofrecida en su documentación para consultar el tagset estaba caída en el momento de consulta, pero se puede encontrar la lista de posible etiquetas en la documentación de la librería#footnote[https://cogcomp.seas.upenn.edu/software/doc/apidocs/edu/illinois/cs/cogcomp/lbjava/nlp/POS.html].
 
 === Lengua romance
 
@@ -39,13 +45,7 @@ Este desambiguador morfosintático fue entrenado en gallego con un corpus de $23
 
 El texto seleccionado fue el artículo de Galicia@wiki:Galicia de la Wikipedia en gallego. Puesto que el texto se encuentra en versión web no es apto para ser analizado directamente con el etiquetador, por lo que se utilizó la TextExtracts API#footnote[Disponible en: https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts] de Wikimedia para obtener una versión con el texto plano#footnote[Petición empleada: https://gl.wikipedia.org/w/api.php?action=query&prop=extracts&exlimit=1&titles=Galicia&explaintext=1&formatversion=2&format=json]. Por medio de sustituciones de expresiones regulares también se eliminó el marcado de las secciones y se comprimieron múltiples líneas vacías. El texto resultante cuenta con $10462$ palabras.
 
-La salida generada por _CitiusTagger_ usa el tagset para el gallego de FreeLing#footnote[Disponible para consulta en: https://freeling-user-manual.readthedocs.io/en/latest/tagsets/tagset-gl/], que a su vez se basa en EAGLES. No se ha contado con una versión del texto anotada por lo que el análisis de la salida fue realizado manualmente.
-
-Un primer error visualizado ya al comienzo es la etiquetación de _"xurídica"_ como un adjetivo, esto no es correcto puesto al ir seguido de _"e lexislativamente"_ estamos ante un caso de _elisión verbal_, por lo que _"xurídica"_ actúa como adverbio aunque sea un adjetivo morfológicamente. Sabiendo que el modelo resuelve los tokens de izquierda a derecha, y que además no evalúa contexto a dos palabras de distancia, es fácil ver la carencia que ha provocado este error.
-
-Otro resultado a analizar es la etiquetación de _/km²_ (extraído de _"hab./km²"_). En una de sus apariciones (línea 443) es categorizado como un adjetivo cualificativo, mientras que en la inmediatamente siguiente (línea 458) es categorizado como un sustantivo común. El contexto previo a ambos es el mismo, sin embargo, la presencia de una preposición a continuación, en vez de una conjunción, ha permitido al modelo desambiguarlo más correctamente.
-
-Más allá de todo esto el resultado contiene un altísimo índice de acierto, incluso a la hora de etiquetar las contracciones tan comunes en el gallego.
+La salida generada por _CitiusTagger_ es un texto plano con una línea dedicada a cada token procesado. En cada una de estas líneas aparecen tres elementos separados por espacios: el primer elemento es el token leído; el segundo es el lema del token leído; y el último elemento es la etiqueta generada para ese token. Dicha etiqueta proviene del tagset para el gallego de FreeLing#footnote[Disponible para consulta en: https://freeling-user-manual.readthedocs.io/en/latest/tagsets/tagset-gl/], que a su vez se basa en EAGLES. Las frases se separan con una línea vacía, y los saltos de línea con dos. Las líneas vacías leídas directamente del texto se representan con el token `<blank>`.
 
 = Methods <sec:methods>
 #lorem(45)
